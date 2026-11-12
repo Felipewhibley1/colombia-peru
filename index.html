@@ -178,6 +178,8 @@ body.home .lead{color:var(--ink)}
 .recipe{background:var(--bg);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .recipe ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;font-size:15px}
 .recipe small{color:var(--muted);font-size:13px}
+.listenwrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.listenwrap small{font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -305,6 +307,7 @@ credits:{en:"Photo credits",es:"Créditos de las fotos",zh:"图片来源",ja:"�
 creditsNote:{en:"Photos from Wikimedia Commons, used under free licenses. Tap one to see the original.",es:"Fotos de Wikimedia Commons, usadas bajo licencias libres. Toca una para ver el original.",zh:"照片来自维基共享资源，依自由许可使用。点击可查看原图。",ja:"写真はウィキメディア・コモンズより、自由なライセンスのもとで使用しています。タップすると元の写真を見られます。",vi:"Ảnh từ Wikimedia Commons, sử dụng theo giấy phép tự do. Chạm để xem ảnh gốc.",ko:"사진은 위키미디어 공용에서 가져왔으며 자유 라이선스에 따라 사용합니다. 누르면 원본을 볼 수 있습니다."},
 photo:{en:"Photo",es:"Foto",zh:"照片",ja:"写真",vi:"Ảnh",ko:"사진"},
 listen:{en:"Listen",es:"Escuchar",zh:"朗读",ja:"音声で聞く",vi:"Nghe",ko:"듣기"},
+noSound:{en:"No sound? Turn up the volume and switch off silent mode.",es:"¿No se oye? Sube el volumen y quita el modo silencio.",zh:"没有声音？请调高音量并关闭静音模式。",ja:"音が出ない場合は、音量を上げてマナーモードを解除してください。",vi:"Không nghe thấy? Hãy tăng âm lượng và tắt chế độ im lặng.",ko:"소리가 안 들리면 볼륨을 높이고 무음 모드를 꺼 주세요."},
 stop:{en:"Stop",es:"Detener",zh:"停止",ja:"停止",vi:"Dừng",ko:"정지"},
 recipe:{en:"See the recipe",es:"Ver la receta",zh:"查看做法",ja:"レシピを見る",vi:"Xem công thức",ko:"레시피 보기"},
 recipeT:{en:"Recipe",es:"Receta",zh:"做法",ja:"レシピ",vi:"Công thức",ko:"레시피"},
@@ -466,21 +469,29 @@ vi:["Luộc 250 g bí đỏ và 250 g khoai lang cho mềm rồi nghiền nhuy�
 ko:["호박 250g과 고구마 250g을 부드럽게 삶아 으깹니다.","으깬 것에 밀가루 2컵, 드라이이스트 1큰술, 설탕 2큰술, 아니스 약간을 섞어 1시간 발효시킵니다.","손가락에 물을 묻혀 반죽을 고리 모양으로 만들어 뜨거운 기름에 노릇하게 튀깁니다.","시럽: 찬카카(또는 흑설탕) 250g을 물 1컵, 계피, 정향, 오렌지 껍질과 함께 걸쭉해질 때까지 졸여 위에 뿌립니다."]}}
 };
 
-const VL={en:"en-US",es:"es-US",zh:"zh-CN",ja:"ja-JP",vi:"vi-VN",ko:"ko-KR"};
+const VL={en:"en-US",es:"es-MX",zh:"zh-CN",ja:"ja-JP",vi:"vi-VN",ko:"ko-KR"};
 const canSpeak="speechSynthesis" in window&&"SpeechSynthesisUtterance" in window;
-let speaking=null;
-function stopSpeak(){speaking=null;if(canSpeak)try{speechSynthesis.cancel()}catch(e){}}
+let speaking=null,utts=[];
+function stopSpeak(){speaking=null;utts=[];if(canSpeak)try{speechSynthesis.cancel()}catch(e){}}
 function speak(id,text){
   if(!canSpeak)return;
   if(speaking===id){stopSpeak();render();return}
-  try{speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);u.lang=VL[S.lang];u.rate=.95;
-    const v=speechSynthesis.getVoices().find(v=>v.lang.replace("_","-").toLowerCase().startsWith(S.lang));if(v)u.voice=v;
-    u.onend=u.onerror=()=>{if(speaking===id){speaking=null;render()}};
-    speaking=id;speechSynthesis.speak(u)}catch(e){speaking=null}
+  const busy=speechSynthesis.speaking||speechSynthesis.pending;
+  const parts=(text.match(/[^.!?。！？]+[.!?。！？]*/g)||[text]).map(x=>x.trim()).filter(Boolean);
+  const run=()=>{
+    if(speaking!==id)return;
+    try{speechSynthesis.resume()}catch(e){}
+    utts=parts.map((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=VL[S.lang];u.rate=.95;u.volume=1;
+      if(i===parts.length-1)u.onend=()=>{if(speaking===id){speaking=null;utts=[];render()}};
+      u.onerror=e=>{if(e.error!=="interrupted"&&e.error!=="canceled"&&speaking===id){speaking=null;utts=[];render()}};
+      return u});
+    utts.forEach(u=>{try{speechSynthesis.speak(u)}catch(e){}});
+  };
+  speaking=id;
+  if(busy){try{speechSynthesis.cancel()}catch(e){}setTimeout(run,120)}else run();
   render();
 }
-function listenBtn(id,getText){const b=el("button","want listen",speaking===id?"■ "+t("stop"):"🔊 "+t("listen"));b.type="button";b.setAttribute("aria-pressed",String(speaking===id));b.onclick=()=>speak(id,getText());return b}
+function listenBtn(id,getText){const w=el("div","listenwrap"),b=el("button","want listen",speaking===id?"■ "+t("stop"):"🔊 "+t("listen"));b.type="button";b.setAttribute("aria-pressed",String(speaking===id));b.onclick=()=>speak(id,getText());w.append(b);if(speaking===id)w.append(el("small","",t("noSound")));return w}
 if(canSpeak)try{speechSynthesis.getVoices()}catch(e){}
 let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null,open:null,prev:"home",rec:false};
 const ORDER=["home","register","lang","intro","choose"];
