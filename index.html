@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Colombia & Perú en la Semana Internacional</title>
+<title>Perú & Colombia en la Semana Internacional</title>
 <style>
 /* Layout idea: one phone-width column, one screen per step, flags as the only loud color. */
 :root{
@@ -66,8 +66,8 @@ p{margin:0}
 /* flags */
 .flags{position:relative;aspect-ratio:100/50}
 .flag{position:absolute;width:58%;aspect-ratio:3/2;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18);border:1px solid var(--line)}
-.flag.co{left:0;top:0;transform:rotate(-5deg);background:linear-gradient(var(--co-y) 0 50%,var(--co-b) 50% 75%,var(--co-r) 75%);animation:sway 6s ease-in-out infinite alternate}
-.flag.pe{right:0;top:22px;transform:rotate(6deg);background:linear-gradient(90deg,var(--pe-r) 0 33.3%,var(--pe-w) 33.3% 66.6%,var(--pe-r) 66.6%);animation:sway2 6s ease-in-out infinite alternate}
+.flag.co{right:0;top:22px;transform:rotate(6deg);background:linear-gradient(var(--co-y) 0 50%,var(--co-b) 50% 75%,var(--co-r) 75%);animation:sway2 6s ease-in-out infinite alternate}
+.flag.pe{left:0;top:0;transform:rotate(-5deg);background:linear-gradient(90deg,var(--pe-r) 0 33.3%,var(--pe-w) 33.3% 66.6%,var(--pe-r) 66.6%);animation:sway 6s ease-in-out infinite alternate}
 @keyframes sway{to{transform:rotate(-2deg) translateY(-4px)}}
 @keyframes sway2{to{transform:rotate(3deg) translateY(4px)}}
 .miniflag{width:44px;aspect-ratio:3/2;border-radius:6px;border:1px solid var(--line);flex:none}
@@ -161,7 +161,7 @@ footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;paddi
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
 @media (prefers-reduced-motion:reduce){.strip-in,.sheet,.sheetbg{animation:none}}
 .prize{align-self:stretch;background:var(--ink);color:var(--bg);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;animation:pulse 1.4s ease-in-out infinite alternate}
-.prize .stripe{height:10px;background:linear-gradient(90deg,var(--co-y) 0 25%,var(--co-b) 25% 37.5%,var(--co-r) 37.5% 50%,var(--pe-r) 50% 66.6%,var(--pe-w) 66.6% 83.3%,var(--pe-r) 83.3%)}
+.prize .stripe{height:10px;background:linear-gradient(90deg,var(--pe-r) 0 16.6%,var(--pe-w) 16.6% 33.3%,var(--pe-r) 33.3% 50%,var(--co-y) 50% 75%,var(--co-b) 75% 87.5%,var(--co-r) 87.5%)}
 .prize .in{padding:22px 18px;display:flex;flex-direction:column;gap:8px;align-items:center}
 .prize small{font-size:15px;font-weight:600;opacity:.8}
 .prize strong{font-family:var(--display);font-size:clamp(30px,9vw,40px);line-height:1.05;letter-spacing:-.02em;text-wrap:balance}
@@ -209,8 +209,8 @@ footer{border-radius:16px;padding:10px 12px;margin-top:0}
   <div class="steps" id="steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
   <section class="screen active" id="s-home">
-    <div class="flags" aria-hidden="true"><div class="flag co"></div><div class="flag pe"></div></div>
-    <h1>Colombia <span style="color:var(--muted)">&amp;</span> Perú</h1>
+    <div class="flags" aria-hidden="true"><div class="flag pe"></div><div class="flag co"></div></div>
+    <h1>Perú <span style="color:var(--muted)">&amp;</span> Colombia</h1>
     <p class="lead" data-t="heroSub"></p>
     <button class="btn" data-go="register" data-t="start"></button>
     <div class="strip" aria-hidden="true"><div class="strip-in" id="strip"></div></div>
@@ -244,8 +244,8 @@ footer{border-radius:16px;padding:10px 12px;margin-top:0}
 
   <section class="screen" id="s-choose">
     <h2 data-t="choose"></h2>
-    <button class="country" data-country="co"><img alt="" data-ph="Valle de Cocora"><div><i class="miniflag co"></i><div><b>Colombia</b><span data-t="coTag"></span></div></div></button>
     <button class="country" data-country="pe"><img alt="" data-ph="Machu Picchu"><div><i class="miniflag pe"></i><div><b>Perú</b><span data-t="peTag"></span></div></div></button>
+    <button class="country" data-country="co"><img alt="" data-ph="Valle de Cocora"><div><i class="miniflag co"></i><div><b>Colombia</b><span data-t="coTag"></span></div></div></button>
     <p class="tally" id="tally"></p>
     <div class="wantrow" id="wantrow"></div>
     <button class="btn wide" data-go="quiz" data-t="quiz"></button>
@@ -275,7 +275,7 @@ footer{border-radius:16px;padding:10px 12px;margin-top:0}
     <div class="grid" id="creditlist"></div>
   </section>
 
-  <footer>Mission College · International Week · Colombia &amp; Perú<br><button class="linkbtn" data-go="credits" data-t="credits"></button></footer>
+  <footer>Mission College · International Week · Perú &amp; Colombia<br><button class="linkbtn" data-go="credits" data-t="credits"></button></footer>
 </div>
 <div class="sheetbg" id="sheetbg" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <canvas id="confetti" hidden></canvas>
@@ -295,7 +295,7 @@ cont:{en:"Continue",es:"Continuar",zh:"继续",ja:"次へ",vi:"Tiếp tục",ko:
 langTitle:{en:"Choose your language",es:"Elige tu idioma",zh:"选择语言",ja:"言語を選んでください",vi:"Chọn ngôn ngữ",ko:"언어를 선택하세요"},
 hello:{en:"Hello, {n}!",es:"¡Hola, {n}!",zh:"你好，{n}！",ja:"こんにちは、{n}さん！",vi:"Xin chào, {n}!",ko:"안녕하세요, {n} 님!"},
 introTitle:{en:"Neighbors in South America",es:"Vecinos en Suramérica",zh:"南美洲的两位邻居",ja:"南米のおとなりどうし",vi:"Hai người hàng xóm ở Nam Mỹ",ko:"남아메리카의 이웃 나라"},
-intro1:{en:"Colombia and Peru share a border in the Amazon, the Andes mountains, the Spanish language and a deep love of food and music.",es:"Colombia y Perú comparten frontera en la Amazonía, la cordillera de los Andes, el idioma español y un amor profundo por la comida y la música.",zh:"哥伦比亚和秘鲁在亚马孙地区接壤，同享安第斯山脉和西班牙语，也同样热爱美食与音乐。",ja:"コロンビアとペルーはアマゾンで国境を接し、アンデス山脈とスペイン語、そして食と音楽への深い愛を分かち合っています。",vi:"Colombia và Peru có chung đường biên giới ở Amazon, chung dãy Andes, tiếng Tây Ban Nha và tình yêu sâu đậm với ẩm thực và âm nhạc.",ko:"콜롬비아와 페루는 아마존에서 국경을 맞대고 있으며, 안데스산맥과 스페인어, 그리고 음식과 음악에 대한 깊은 사랑을 함께 나눕니다."},
+intro1:{en:"Peru and Colombia share a border in the Amazon, the Andes mountains, the Spanish language and a deep love of food and music.",es:"Perú y Colombia comparten frontera en la Amazonía, la cordillera de los Andes, el idioma español y un amor profundo por la comida y la música.",zh:"秘鲁和哥伦比亚在亚马孙地区接壤，同享安第斯山脉和西班牙语，也同样热爱美食与音乐。",ja:"ペルーとコロンビアはアマゾンで国境を接し、アンデス山脈とスペイン語、そして食と音楽への深い愛を分かち合っています。",vi:"Peru và Colombia có chung đường biên giới ở Amazon, chung dãy Andes, tiếng Tây Ban Nha và tình yêu sâu đậm với ẩm thực và âm nhạc.",ko:"페루와 콜롬비아는 아마존에서 국경을 맞대고 있으며, 안데스산맥과 스페인어, 그리고 음식과 음악에 대한 깊은 사랑을 함께 나눕니다."},
 intro2:{en:"From Caribbean beaches to Inca cities in the clouds, each country cooks with what its land gives: corn, potatoes, plantain, fresh fish and chili peppers.",es:"De las playas del Caribe a las ciudades incas entre las nubes, cada país cocina con lo que da su tierra: maíz, papa, plátano, pescado fresco y ají.",zh:"从加勒比海滩到云端的印加古城，两国都用土地的馈赠做菜：玉米、土豆、大蕉、鲜鱼和辣椒。",ja:"カリブ海のビーチから雲の上のインカの都まで。どちらの国も、とうもろこし、じゃがいも、プランテン、新鮮な魚、唐辛子など大地の恵みで料理します。",vi:"Từ bãi biển Caribe đến thành phố Inca giữa mây trời, mỗi nước nấu ăn bằng sản vật quê hương: ngô, khoai tây, chuối nấu, cá tươi và ớt.",ko:"카리브해 해변에서 구름 위의 잉카 도시까지, 두 나라는 옥수수, 감자, 플랜틴, 신선한 생선, 고추 등 땅이 주는 재료로 요리합니다."},
 choose:{en:"Choose a country",es:"Elige un país",zh:"选择一个国家",ja:"国を選ぶ",vi:"Chọn một quốc gia",ko:"나라 선택하기"},
 coTag:{en:"Coffee, two oceans and more bird species than any other country",es:"Café, dos océanos y más especies de aves que cualquier otro país",zh:"咖啡、两大洋，以及全球最多的鸟类种类",ja:"コーヒー、ふたつの海、そして世界一多い鳥の種類",vi:"Cà phê, hai đại dương và nhiều loài chim nhất thế giới",ko:"커피, 두 개의 바다, 그리고 세계에서 가장 많은 조류 종"},
@@ -312,7 +312,7 @@ rules:{en:"Answer all {t} questions correctly to win a prize.",es:"Responde bien
 retry:{en:"Not quite. Try again.",es:"Vuelve a intentarlo.",zh:"不对哦，再试一次。",ja:"おしい！もう一度挑戦しよう。",vi:"Chưa đúng. Hãy thử lại.",ko:"아쉬워요. 다시 해 보세요."},
 win:{en:"You won!",es:"¡Ganaste!",zh:"你赢了！",ja:"おめでとうございます！",vi:"Bạn đã thắng!",ko:"축하합니다!"},
 claim:{en:"Claim your prize",es:"Reclama tu premio",zh:"领取你的奖品",ja:"賞品を受け取ろう",vi:"Nhận phần thưởng của bạn",ko:"상품을 받으세요"},
-claimHint:{en:"Show this screen at the Colombia & Peru table.",es:"Muestra esta pantalla en la mesa de Colombia y Perú.",zh:"请在哥伦比亚和秘鲁展台出示此页面。",ja:"コロンビアとペルーのブースでこの画面を見せてください。",vi:"Hãy đưa màn hình này tại bàn Colombia & Peru.",ko:"콜롬비아·페루 부스에서 이 화면을 보여 주세요."},
+claimHint:{en:"Show this screen at the Peru & Colombia table.",es:"Muestra esta pantalla en la mesa de Perú y Colombia.",zh:"请在秘鲁和哥伦比亚展台出示此页面。",ja:"ペルーとコロンビアのブースでこの画面を見せてください。",vi:"Hãy đưa màn hình này tại bàn Peru & Colombia.",ko:"페루·콜롬비아 부스에서 이 화면을 보여 주세요."},
 lose:{en:"Almost! You need {n} correct answers to win. Try again.",es:"¡Casi! Necesitas {n} respuestas correctas para ganar. Inténtalo de nuevo.",zh:"差一点！需要答对 {n} 题才能获奖，再试一次吧。",ja:"おしい！賞品には{n}問正解が必要です。もう一度挑戦しよう。",vi:"Suýt nữa! Bạn cần {n} câu đúng để thắng. Hãy thử lại.",ko:"아쉬워요! {n}문제를 맞혀야 합니다. 다시 도전해 보세요."},
 quizQ:{en:"Which country is it from?",es:"¿De qué país es?",zh:"这是哪个国家的？",ja:"どこの国でしょう？",vi:"Đây là của nước nào?",ko:"어느 나라일까요?"},
 ok:{en:"Correct!",es:"¡Correcto!",zh:"答对了！",ja:"正解！",vi:"Chính xác!",ko:"정답!"},
@@ -741,7 +741,7 @@ function renderQuiz(){
     box.append(fb,el("p","muted",d.d[S.lang]||d.d.en),nx);
   }else{
     const r=el("div","row");
-    ["co","pe"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.disabled=Q.wrong===c;b.onclick=()=>{if(c===cur.c){Q.ans="ok"}else{Q.ans="retry";Q.wrong=c}render()};r.append(b)});
+    ["pe","co"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.disabled=Q.wrong===c;b.onclick=()=>{if(c===cur.c){Q.ans="ok"}else{Q.ans="retry";Q.wrong=c}render()};r.append(b)});
     if(Q.ans==="retry"){fb.className="fb no";fb.textContent=t("retry")}
     box.append(r,fb);
   }
@@ -756,7 +756,7 @@ document.addEventListener("click",e=>{
 $("back").onclick=()=>go(S.screen==="credits"?(S.prev||"home"):(BACK[S.screen]||"home"));
 $("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")closeSheet()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.open)closeSheet()});
-(function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?a.length/2:0)+Math.floor(i/2)].n);
+(function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?0:a.length/2)+Math.floor(i/2)].n);
   [...names,...names].forEach(n=>{const i=pimg(n,"s");i.loading="eager";st.append(i)});
   (function(){const i=new Image();i.onload=()=>{$("campus").style.backgroundImage='url("'+i.src+'")'};i.src=purl("Mission College","l")})();
   document.querySelectorAll("img[data-ph]").forEach(i=>{i.onerror=()=>i.remove();i.src=purl(i.dataset.ph,"l")})})();
