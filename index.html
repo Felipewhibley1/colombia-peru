@@ -117,6 +117,48 @@ p{margin:0}
 .fb.ok{color:var(--good)}.fb.no{color:var(--bad)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;padding-top:12px}
+
+[hidden]{display:none!important}
+.strip{overflow:hidden;margin:0 -20px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.strip-in{display:flex;gap:12px;width:max-content;animation:slide 48s linear infinite}
+.strip-in img{width:120px;height:120px;object-fit:cover;border-radius:18px;background:var(--line)}
+@keyframes slide{to{transform:translateX(-50%)}}
+.country{position:relative;aspect-ratio:16/9;overflow:hidden;padding:0;align-items:flex-end;color:#fff;background:#3a3a3c;width:100%}
+.country>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.country:active>img{transform:scale(1.04)}
+.country::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,.72))}
+.country>div{position:relative;z-index:1;padding:16px;flex-direction:row!important;align-items:center;gap:12px!important}
+.country>div>div{display:flex;flex-direction:column;gap:2px}
+.country span{color:rgba(255,255,255,.88)}
+.country .miniflag{width:48px;border-color:rgba(255,255,255,.6)}
+.wantrow{display:flex;gap:8px;flex-wrap:wrap}
+.wantrow img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;aspect-ratio:4/5;color:#fff;text-align:left;display:block}
+.tile.big{grid-column:1/-1;aspect-ratio:16/10}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.tile:active img{transform:scale(1.06)}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.75))}
+.tile b{position:absolute;left:12px;right:12px;bottom:10px;z-index:1;font-family:var(--display);font-size:18px;line-height:1.15;letter-spacing:-.01em}
+.tile.big b{font-size:24px}
+.tile .heart{position:absolute;top:10px;right:10px;z-index:1;background:var(--accent);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:14px}
+.sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:10;animation:fade .2s}
+.sheet{background:var(--surface);width:100%;max-width:560px;max-height:92%;overflow:auto;border-radius:22px 22px 0 0;animation:up .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40%)}}
+.sheetph{position:relative;aspect-ratio:4/3}
+.sheetph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sheetx{position:absolute;top:12px;right:12px;font-size:20px;line-height:1}
+.sheetbody{padding:20px 20px 32px;display:flex;flex-direction:column;gap:12px}
+.qph{width:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;position:relative}
+.qph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.credit{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px}
+.credit img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex:none;background:var(--line)}
+.credit div{min-width:0;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.credit b{display:block;color:var(--ink);font-size:15px}
+.linkbtn{border:0;background:none;color:var(--accent);font-size:13px;padding:8px;text-decoration:underline}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+@media (prefers-reduced-motion:reduce){.strip-in,.sheet,.sheetbg{animation:none}}
 </style>
 </head>
 <body>
@@ -133,6 +175,7 @@ footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;paddi
     <h1>Colombia <span style="color:var(--muted)">&amp;</span> Perú</h1>
     <p class="lead" data-t="heroSub"></p>
     <button class="btn" data-go="register" data-t="start"></button>
+    <div class="strip" aria-hidden="true"><div class="strip-in" id="strip"></div></div>
   </section>
 
   <section class="screen" id="s-register">
@@ -162,9 +205,10 @@ footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;paddi
 
   <section class="screen" id="s-choose">
     <h2 data-t="choose"></h2>
-    <button class="country" data-country="co"><i class="miniflag co"></i><div><b>Colombia</b><span data-t="coTag"></span></div></button>
-    <button class="country" data-country="pe"><i class="miniflag pe"></i><div><b>Perú</b><span data-t="peTag"></span></div></button>
+    <button class="country" data-country="co"><img alt="" data-ph="Valle de Cocora"><div><i class="miniflag co"></i><div><b>Colombia</b><span data-t="coTag"></span></div></div></button>
+    <button class="country" data-country="pe"><img alt="" data-ph="Machu Picchu"><div><i class="miniflag pe"></i><div><b>Perú</b><span data-t="peTag"></span></div></div></button>
     <p class="tally" id="tally"></p>
+    <div class="wantrow" id="wantrow"></div>
     <button class="btn ghost wide" data-go="quiz" data-t="quiz"></button>
   </section>
 
@@ -175,7 +219,8 @@ footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;paddi
       <button role="tab" id="tab-dishes" data-tab="dishes" data-t="dishes"></button>
       <button role="tab" id="tab-things" data-tab="things" data-t="things"></button>
     </div>
-    <div class="grid" id="list"></div>
+    <p class="muted" data-t="tapHint"></p>
+    <div class="tiles" id="list"></div>
   </section>
 
   <section class="screen" id="s-quiz">
@@ -183,8 +228,16 @@ footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;paddi
     <div class="quizcard" id="quizcard"></div>
   </section>
 
-  <footer>Mission College · International Week · Colombia &amp; Perú</footer>
+  <section class="screen" id="s-credits">
+    <h2 data-t="credits"></h2>
+    <p class="muted" data-t="creditsNote"></p>
+    <div class="grid" id="creditlist"></div>
+  </section>
+
+  <footer>Mission College · International Week · Colombia &amp; Perú<br><button class="linkbtn" data-go="credits" data-t="credits"></button></footer>
 </div>
+<div class="sheetbg" id="sheetbg" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<canvas id="confetti" hidden></canvas>
 
 <script>
 const LANGS=[["en","English"],["es","Español"],["zh","中文"],["ja","日本語"],["vi","Tiếng Việt"],["ko","한국어"]];
@@ -219,6 +272,10 @@ ok:{en:"Correct!",es:"¡Correcto!",zh:"答对了！",ja:"正解！",vi:"Chính x
 no:{en:"Not quite. It is from {c}.",es:"Casi. Es de {c}.",zh:"不对哦，它来自{c}。",ja:"おしい！正解は{c}です。",vi:"Chưa đúng. Món này của {c}.",ko:"아쉬워요. {c} 음식입니다."},
 next:{en:"Next",es:"Siguiente",zh:"下一题",ja:"次へ",vi:"Tiếp",ko:"다음"},
 score:{en:"You got {s} of {t}",es:"Acertaste {s} de {t}",zh:"你答对了 {s} / {t}",ja:"{t}問中{s}問正解",vi:"Bạn đúng {s} trên {t}",ko:"{t}문제 중 {s}문제 정답"},
+tapHint:{en:"Tap a photo to see more",es:"Toca una foto para ver más",zh:"点击照片查看详情",ja:"写真をタップすると詳しく見られます",vi:"Chạm vào ảnh để xem thêm",ko:"사진을 눌러 자세히 보기"},
+credits:{en:"Photo credits",es:"Créditos de las fotos",zh:"图片来源",ja:"写真クレジット",vi:"Nguồn ảnh",ko:"사진 출처"},
+creditsNote:{en:"Photos from Wikimedia Commons, used under free licenses. Tap one to see the original.",es:"Fotos de Wikimedia Commons, usadas bajo licencias libres. Toca una para ver el original.",zh:"照片来自维基共享资源，依自由许可使用。点击可查看原图。",ja:"写真はウィキメディア・コモンズより、自由なライセンスのもとで使用しています。タップすると元の写真を見られます。",vi:"Ảnh từ Wikimedia Commons, sử dụng theo giấy phép tự do. Chạm để xem ảnh gốc.",ko:"사진은 위키미디어 공용에서 가져왔으며 자유 라이선스에 따라 사용합니다. 누르면 원본을 볼 수 있습니다."},
+photo:{en:"Photo",es:"Foto",zh:"照片",ja:"写真",vi:"Ảnh",ko:"사진"},
 again:{en:"Play again",es:"Jugar otra vez",zh:"再玩一次",ja:"もう一度",vi:"Chơi lại",ko:"다시 하기"}
 };
 const CN={co:"Colombia",pe:"Perú"};
@@ -259,7 +316,37 @@ things:[
 ]}
 };
 
-let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null};
+const PH={
+"Bandeja paisa":["Bandeja Paisa (Bogotá).jpg","Edgar Zuniga Jr.","CC BY 2.0"],
+"Ajiaco":["Ajiaco in Bogotá.jpg","Bernard Gagnon","CC BY-SA 4.0"],
+"Arepa":["Arepa de Chócolo.jpg","John Alexis Guerra Gómez","CC BY-SA 2.0"],
+"Sancocho":["Barranquilla - Sancocho de mondongo.jpg","Jdvillalobos","CC BY 3.0"],
+"Empanadas":["Empanada colombiana.jpg","Francesc Fort","CC BY-SA 4.0"],
+"Buñuelos":["Buñuelos Colombianos (24221303805).jpg","John Alexis Guerra Gómez","CC BY-SA 2.0"],
+"Caño Cristales":["Los Ocho en Caño Cristales.jpg","Gicaman","CC BY-SA 4.0"],
+"Valle de Cocora":["Valle de Cocora, Colombia 03.jpg","Bernard Gagnon","CC BY-SA 4.0"],
+"Cartagena":["Colombia, Cartagena, Sector Antiguo, Calle 35.jpg","Dr. Thomas Liptak","CC BY-SA 4.0"],
+"Eje Cafetero":["Cafe Quimbaya 2005-08-27.jpg","Wikimedia Commons","CC BY 2.5"],
+"Carnaval de Barranquilla":["Garabato Carnaval de Barranquilla.jpg","Jdvillalobos","CC BY 3.0"],
+"Aves":["Colibrí rutilante (45487).jpg","AmiGueko","CC0"],
+"Ceviche":["Ceviche peruano es inscrita en la Lista Representativa de Patrimonio Cultural Inmaterial de la Humanidad - 53381967964.jpg","Ministerio de la Producción del Perú","Public domain"],
+"Lomo saltado":["Lomo-saltado-perudelights.jpg","WikiHes","CC BY-SA 4.0"],
+"Ají de gallina":["Ají de gallina.jpg","Feralbt","CC BY-SA 3.0"],
+"Causa limeña":["Causa a la Limeña (48836160237).jpg","F Delventhal","CC BY 2.0"],
+"Anticuchos":["Anticucho del Perú.JPG","Wikimedia Commons","CC BY-SA 3.0"],
+"Picarones":["Peru Picarones.jpg","Wikimedia Commons","CC BY-SA 3.0"],
+"Machu Picchu":["Machu Picchu, Perú, 2015-07-30, DD 47.JPG","Diego Delso","CC BY-SA 4.0"],
+"Vinicunca":["Vinicunca (Rainbow Mountain).jpg","Steve Fung","CC BY-SA 4.0"],
+"Lago Titicaca":["Islas flotantes de los Uros, Lago Titicaca, Perú, 2015-08-01, DD 44-48 PAN.jpg","Diego Delso","CC BY-SA 4.0",1],
+"Líneas de Nazca":["Líneas de Nazca, Nazca, Perú, 2015-07-29, DD 52.JPG","Diego Delso","CC BY-SA 4.0"],
+"Amazonía":["The Ucayali River in the lowland Amazon rainforest of central Peru (iss074e0492148).jpg","NASA Johnson Space Center","Public domain"],
+"Cusco":["Plaza de Armas, Cusco, Perú, 2015-07-31, DD 53-56 PAN.jpg","Diego Delso","CC BY-SA 4.0",1]
+};
+const SZ={s:250,m:500,l:960}, SZP={s:500,m:1280,l:1280};
+const purl=(n,z)=>"https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(PH[n][0])+"?width="+(PH[n][3]?SZP:SZ)[z||"m"];
+function pimg(n,z){const i=new Image();i.alt=n;i.loading="lazy";i.decoding="async";i.onerror=()=>i.remove();i.src=purl(n,z);return i}
+function findItem(n){for(const c of["co","pe"])for(const k of["dishes","things"]){const d=DATA[c][k].find(x=>x.n===n);if(d)return d}}
+let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null,open:null,prev:"home"};
 const ORDER=["home","register","lang","intro","choose"];
 const BACK={register:"home",lang:"register",intro:"lang",choose:"intro",country:"choose",quiz:"choose"};
 const $=id=>document.getElementById(id);
@@ -276,7 +363,7 @@ function render(){
   $("evt").textContent=t("evt");
   $("langbtn").textContent=S.lang.toUpperCase();
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="s-"+S.screen));
-  $("back").hidden=!BACK[S.screen];
+  $("back").hidden=!BACK[S.screen]&&S.screen!=="credits";
   const idx=ORDER.indexOf(S.screen);const step=idx<0?5:idx+1;
   [...$("steps").children].forEach((d,i)=>d.classList.toggle("on",i<step));
   // languages
@@ -284,6 +371,9 @@ function render(){
   LANGS.forEach(([c,n])=>{const b=el("button","opt");b.type="button";b.setAttribute("aria-pressed",String(c===S.lang));b.append(el("b","",n),el("span","",c.toUpperCase()));b.onclick=()=>{S.lang=c;save();render()};L.append(b)});
   $("hello").textContent=S.name?t("hello",{n:S.name}):"";
   $("tally").textContent=S.want.length?t("tally",{n:S.want.length}):"";
+  const wr=$("wantrow");wr.textContent="";S.want.forEach(n=>{if(PH[n])wr.append(pimg(n,"s"))});
+  if(S.screen==="credits")renderCredits();
+  renderSheet();
   if(S.screen==="country")renderCountry();
   if(S.screen==="quiz")renderQuiz();
 }
@@ -294,16 +384,38 @@ function renderCountry(){
   [["capital",C.capital],["currency",C.currency]].forEach(([k,v])=>{const f=el("div","fact");f.append(el("small","",t(k)),document.createTextNode(v));F.append(f)});
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===S.tab)));
   const list=$("list");list.textContent="";
-  C[S.tab].forEach(it=>{
-    const card=el("article","card");
-    let pic;
-    if(S.tab==="dishes"){pic=el("div","plate");const f=el("i");f.style.background=conic(it.c);pic.append(f)}
-    else{pic=el("div","post");pic.style.background=bands(it.c)}
-    const body=el("div","body");body.append(el("h3","",it.n),el("p","",it.d[S.lang]||it.d.en));
-    if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(x=>ch.append(el("span","chip",x)));body.append(ch);
-      const on=S.want.includes(it.n);const w=el("button","want",on?t("wanted"):t("want"));w.type="button";w.setAttribute("aria-pressed",String(on));
-      w.onclick=()=>{S.want=on?S.want.filter(x=>x!==it.n):[...S.want,it.n];save();render()};body.append(w)}
-    card.append(pic,body);list.append(card)});
+  C[S.tab].forEach((it,ix)=>{
+    const b=el("button","tile"+(ix===0?" big":""));b.type="button";b.style.background=bands(it.c);
+    b.append(pimg(it.n,ix===0?"l":"m"),el("b","",it.n));
+    if(S.want.includes(it.n))b.append(el("span","heart","♥"));
+    b.onclick=()=>{S.open=it.n;renderSheet()};list.append(b)});
+}
+function closeSheet(){S.open=null;renderSheet()}
+function renderSheet(){
+  const bg=$("sheetbg");if(!S.open||!findItem(S.open)){bg.hidden=true;return}
+  const it=findItem(S.open),sh=$("sheet");bg.hidden=false;sh.textContent="";
+  const ph=el("div","sheetph");ph.style.background=bands(it.c);ph.append(pimg(it.n,"l"));
+  const x=el("button","iconbtn sheetx","×");x.type="button";x.setAttribute("aria-label","Close");x.onclick=closeSheet;ph.append(x);
+  const body=el("div","sheetbody");body.append(el("h2","",it.n),el("p","",it.d[S.lang]||it.d.en));
+  if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(v=>ch.append(el("span","chip",v)));body.append(ch);
+    const on=S.want.includes(it.n);const w=el("button","want",on?t("wanted"):t("want"));w.type="button";w.setAttribute("aria-pressed",String(on));
+    w.onclick=()=>{S.want=on?S.want.filter(v=>v!==it.n):[...S.want,it.n];save();render()};body.append(w)}
+  const cr=el("p","muted",t("photo")+": "+PH[it.n][1]+" · "+PH[it.n][2]+" · Wikimedia Commons");cr.style.fontSize="12px";body.append(cr);
+  sh.append(ph,body);sh.scrollTop=0;
+}
+function renderCredits(){
+  const L=$("creditlist");if(L.childElementCount)return;
+  Object.keys(PH).forEach(n=>{const a=el("a","credit");a.href="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(PH[n][0].replace(/ /g,"_"));a.target="_blank";a.rel="noopener";
+    const d=el("div");d.append(el("b","",n),document.createTextNode(PH[n][1]+" · "+PH[n][2]));a.append(pimg(n,"s"),d);L.append(a)});
+}
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const c=$("confetti");c.hidden=false;const x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const col=["#FFCD00","#003087","#C8102E","#D91023","#FFFFFF"];
+  const P=Array.from({length:140},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,v:2+Math.random()*4,w:6+Math.random()*6,r:Math.random()*6,c:col[Math.floor(Math.random()*col.length)],s:(Math.random()-.5)*2}));
+  const t0=performance.now();
+  (function f(now){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.x+=p.s;p.r+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);x.restore()});
+    if(now-t0<3200)requestAnimationFrame(f);else c.hidden=true})(t0);
 }
 function newQuiz(){
   const all=[];for(const c of["co","pe"])DATA[c].dishes.forEach(d=>all.push({c,d}));
@@ -316,12 +428,13 @@ function renderQuiz(){
   const Q=S.quiz,box=$("quizcard");box.textContent="";
   if(Q.i>=Q.q.length){
     box.append(el("h3","",t("score",{s:Q.score,t:Q.q.length})));
+    if(Q.score>=4&&!Q.done){Q.done=1;confetti()}
     const again=el("button","btn",t("again"));again.onclick=()=>{newQuiz();render()};
     const home=el("button","btn ghost",t("choose"));home.onclick=()=>go("choose");
     const r=el("div","row");r.append(again,home);box.append(r);return}
   const cur=Q.q[Q.i],d=findDish(cur.n);
   box.append(el("p","muted",(Q.i+1)+" / "+Q.q.length));
-  const p=el("div","plate"),f=el("i");f.style.background=conic(d.c);p.append(f);box.append(p,el("h3","",d.n));
+  const p=el("div","qph");p.style.background=bands(d.c);p.append(pimg(d.n,"l"));box.append(p,el("h3","",d.n));
   const chips=el("div","chips");chips.style.justifyContent="center";d.i.split(" · ").forEach(x=>chips.append(el("span","chip",x)));box.append(chips);
   const fb=el("div","fb");
   if(Q.ans==null){
@@ -334,14 +447,19 @@ function renderQuiz(){
     box.append(fb,el("p","muted",d.d[S.lang]||d.d.en),nx);
   }
 }
-function go(s){S.screen=s;if(s==="quiz"&&(!S.quiz||S.quiz.i>=S.quiz.q.length))newQuiz();render();window.scrollTo(0,0)}
+function go(s){if(s==="credits"&&S.screen!=="credits")S.prev=S.screen;S.open=null;S.screen=s;if(s==="quiz"&&(!S.quiz||S.quiz.i>=S.quiz.q.length))newQuiz();render();window.scrollTo(0,0)}
 
 document.addEventListener("click",e=>{
   const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}
   const c=e.target.closest("[data-country]");if(c){S.country=c.dataset.country;S.tab="dishes";go("country");return}
   const tb=e.target.closest("[data-tab]");if(tb){S.tab=tb.dataset.tab;render()}
 });
-$("back").onclick=()=>go(BACK[S.screen]||"home");
+$("back").onclick=()=>go(S.screen==="credits"?(S.prev||"home"):(BACK[S.screen]||"home"));
+$("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")closeSheet()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.open)closeSheet()});
+(function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?6:0)+Math.floor(i/2)].n);
+  [...names,...names].forEach(n=>{const i=pimg(n,"s");i.loading="eager";st.append(i)});
+  document.querySelectorAll("img[data-ph]").forEach(i=>{i.onerror=()=>i.remove();i.src=purl(i.dataset.ph,"l")})})();
 $("langbtn").onclick=()=>{const i=LANGS.findIndex(l=>l[0]===S.lang);S.lang=LANGS[(i+1)%LANGS.length][0];save();render()};
 $("regform").addEventListener("submit",e=>{e.preventDefault();const n=$("name").value.trim();
   if(!n){$("regerr").textContent=t("needName");$("name").focus();return}
