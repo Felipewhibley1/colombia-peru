@@ -196,6 +196,14 @@ footer{border-radius:16px;padding:10px 12px;margin-top:0}
 .steps i{background:var(--glass)}
 .want:disabled{opacity:.35}
 .btn:disabled{opacity:.35}
+.sheet.fromR .sheetph,.sheet.fromR .sheetbody{animation:slR .28s ease both}
+.sheet.fromL .sheetph,.sheet.fromL .sheetbody{animation:slL .28s ease both}
+@keyframes slR{from{transform:translateX(48px);opacity:.3}}
+@keyframes slL{from{transform:translateX(-48px);opacity:.3}}
+@media (prefers-reduced-motion:reduce){.sheet.fromR *,.sheet.fromL *{animation:none!important}}
+.takequiz{position:sticky;bottom:12px;align-self:center;box-shadow:0 8px 24px rgba(0,0,0,.28);animation:up .3s ease}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;z-index:30;max-width:88%;text-align:center}
+.recipe .btn{align-self:flex-start}
 </style>
 </head>
 <body>
@@ -329,6 +337,14 @@ stop:{en:"Stop",es:"Detener",zh:"停止",ja:"停止",vi:"Dừng",ko:"정지"},
 recipe:{en:"See the recipe",es:"Ver la receta",zh:"查看做法",ja:"レシピを見る",vi:"Xem công thức",ko:"레시피 보기"},
 recipeT:{en:"Recipe",es:"Receta",zh:"做法",ja:"レシピ",vi:"Công thức",ko:"레시피"},
 swipe:{en:"Swipe for more photos",es:"Desliza para ver más fotos",zh:"左右滑动查看更多照片",ja:"スワイプで他の写真を見る",vi:"Vuốt để xem thêm ảnh",ko:"밀어서 사진 더 보기"},
+share:{en:"Share",es:"Compartir",zh:"分享",ja:"シェア",vi:"Chia sẻ",ko:"공유"},
+copied:{en:"Link copied",es:"Enlace copiado",zh:"链接已复制",ja:"リンクをコピーしました",vi:"Đã sao chép liên kết",ko:"링크를 복사했습니다"},
+shareText:{en:"Look at this dish from {c}: {n}",es:"Mira este plato de {c}: {n}",zh:"看看这道来自{c}的菜：{n}",ja:"{c}の料理「{n}」を見てみて",vi:"Xem món này của {c}: {n}",ko:"{c} 음식 {n}, 한번 보세요"},
+pdf:{en:"Download PDF",es:"Descargar PDF",zh:"下载 PDF",ja:"PDFをダウンロード",vi:"Tải PDF",ko:"PDF 다운로드"},
+pdfBusy:{en:"Preparing…",es:"Preparando…",zh:"正在生成…",ja:"作成中…",vi:"Đang tạo…",ko:"만드는 중…"},
+pdfFail:{en:"The PDF could not be created. Check your connection and try again.",es:"No se pudo crear el PDF. Revisa tu conexión e inténtalo de nuevo.",zh:"无法生成 PDF，请检查网络后重试。",ja:"PDFを作成できませんでした。接続を確認してもう一度お試しください。",vi:"Không tạo được PDF. Hãy kiểm tra kết nối và thử lại.",ko:"PDF를 만들지 못했습니다. 연결을 확인하고 다시 시도해 주세요."},
+swipeDish:{en:"Swipe left or right to see more dishes",es:"Desliza a la izquierda o a la derecha para ver más platos",zh:"左右滑动查看更多菜肴",ja:"左右にスワイプして他の料理を見る",vi:"Vuốt sang trái hoặc phải để xem thêm món",ko:"좌우로 밀어 다른 음식 보기"},
+takeQuiz:{en:"Take the quiz",es:"Hacer el quiz",zh:"参加测验",ja:"クイズに挑戦",vi:"Làm bài đố",ko:"퀴즈 풀기"},
 again:{en:"Play again",es:"Jugar otra vez",zh:"再玩一次",ja:"もう一度",vi:"Chơi lại",ko:"다시 하기"}
 };
 const CN={co:"Colombia",pe:"Perú"};
@@ -620,7 +636,7 @@ function speak(id,text){
 }
 function listenBtn(id,getText){const w=el("div","listenwrap"),b=el("button","want listen",speaking===id?"■ "+t("stop"):"🔊 "+t("listen"));b.type="button";b.setAttribute("aria-pressed",String(speaking===id));b.onclick=()=>speak(id,getText());w.append(b);if(speaking===id)w.append(el("small","",t("noSound")));return w}
 if(canSpeak)try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
-let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null,open:null,prev:"home",rec:false};
+let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null,open:null,prev:"home",rec:false,swiped:false};
 const ORDER=["home","register","lang","intro","choose"];
 const BACK={register:"home",lang:"register",intro:"lang",choose:"intro",country:"choose",quiz:"choose"};
 const $=id=>document.getElementById(id);
@@ -667,6 +683,56 @@ function renderCountry(){
     b.onclick=()=>{stopSpeak();S.rec=false;S.open=it.n;renderSheet()};list.append(b)});
 }
 function closeSheet(){S.open=null;S.rec=false;stopSpeak();renderSheet()}
+const slug=n=>n.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function itemCountry(n){return DATA.co.dishes.concat(DATA.co.things).some(x=>x.n===n)?"co":"pe"}
+function toast(msg){document.querySelectorAll(".toast").forEach(x=>x.remove());const d=el("div","toast",msg);d.setAttribute("role","status");document.body.append(d);setTimeout(()=>d.remove(),2600)}
+async function shareItem(it){
+  const url=location.origin+location.pathname+"#"+slug(it.n),text=t("shareText",{c:CN[itemCountry(it.n)],n:it.n});
+  if(navigator.share){try{await navigator.share({title:it.n,text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(text+" "+url);toast(t("copied"))}catch(e){toast(url)}
+}
+function navDish(dir){
+  const it=findItem(S.open);if(!it||!it.i)return;
+  const L=DATA[itemCountry(it.n)].dishes,ix=L.findIndex(x=>x.n===it.n),nx=L[(ix+dir+L.length)%L.length];
+  stopSpeak();S.rec=false;S.swiped=true;S.open=nx.n;
+  const sh=$("sheet");sh.classList.remove("fromR","fromL");renderSheet();void sh.offsetWidth;sh.classList.add(dir>0?"fromR":"fromL");
+}
+function loadScript(src){return new Promise((res,rej)=>{const e=document.createElement("script");e.src=src;e.onload=res;e.onerror=rej;document.head.append(e)})}
+async function corsImg(p){
+  try{const j=await fetch("https://commons.wikimedia.org/w/api.php?origin=*&format=json&action=query&titles="+encodeURIComponent("File:"+p[0])+"&prop=imageinfo&iiprop=url&iiurlwidth=960").then(r=>r.json());
+    const u=Object.values(j.query.pages)[0].imageinfo[0].thumburl;
+    return await new Promise((res,rej)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=u})}catch(e){return null}
+}
+function wrapText(x,text,maxW){
+  const toks=text.split(/(\s+)/).flatMap(k=>x.measureText(k).width>maxW*0.5?[...k]:[k]);const lines=[];let line="";
+  for(const k of toks){if(x.measureText(line+k).width>maxW&&line.trim()){lines.push(line.trim());line=k.trim()?k:""}else line+=k}
+  if(line.trim())lines.push(line.trim());return lines;
+}
+async function recipePdf(it,btn){
+  const rc=R[it.n];if(!rc)return;const old=btn.textContent;btn.disabled=true;btn.textContent=t("pdfBusy");
+  try{
+    if(!window.jspdf)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    const img=await corsImg(PH[it.n]);
+    const W=1240,M=90,F='-apple-system,"Segoe UI",Roboto,"Noto Sans","PingFang SC","Hiragino Sans","Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK SC",sans-serif';
+    const cv=document.createElement("canvas");cv.width=W;cv.height=3200;const x=cv.getContext("2d");
+    x.fillStyle="#fff";x.fillRect(0,0,W,cv.height);x.textBaseline="top";let y=0;
+    if(img){const ph=600,sc=Math.max(W/img.width,ph/img.height),sw=W/sc,shh=ph/sc;x.drawImage(img,(img.width-sw)/2,(img.height-shh)/2,sw,shh,0,0,W,ph);y=ph}
+    y+=50;x.fillStyle="#6E6E73";x.font="600 26px "+F;x.fillText("Mission College · International Week · "+CN[itemCountry(it.n)],M,y);y+=48;
+    x.fillStyle="#1D1D1F";x.font="800 76px "+F;wrapText(x,it.n,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=88});y+=6;
+    x.fillStyle="#6E6E73";x.font="500 30px "+F;x.fillText(rc.m,M,y);y+=58;
+    x.fillStyle="#1D1D1F";x.font="400 32px "+F;wrapText(x,it.d[S.lang]||it.d.en,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=46});y+=20;
+    x.fillStyle="#6E6E73";x.font="400 28px "+F;wrapText(x,it.i,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=40});y+=34;
+    x.fillStyle="#1D1D1F";x.font="700 44px "+F;x.fillText(t("recipeT"),M,y);y+=70;
+    (rc.s[S.lang]||rc.s.en).forEach((st,i)=>{x.font="700 32px "+F;x.fillStyle="#0071E3";x.fillText(String(i+1),M,y);x.fillStyle="#1D1D1F";x.font="400 32px "+F;
+      wrapText(x,st,W-2*M-60).forEach(l=>{x.fillText(l,M+60,y);y+=46});y+=22});
+    y+=24;x.fillStyle="#98989D";x.font="400 22px "+F;
+    wrapText(x,t("photo")+": "+PH[it.n][1]+" · "+PH[it.n][2]+" · Wikimedia Commons    "+location.origin+location.pathname,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=32});
+    const H=Math.max(1754,y+70),out=document.createElement("canvas");out.width=W;out.height=H;const o=out.getContext("2d");o.fillStyle="#fff";o.fillRect(0,0,W,H);o.drawImage(cv,0,0);
+    const doc=new window.jspdf.jsPDF({unit:"px",format:[W,H],orientation:"portrait",hotfixes:["px_scaling"]});
+    doc.addImage(out.toDataURL("image/jpeg",.9),"JPEG",0,0,W,H);doc.save(slug(it.n)+"-"+S.lang+".pdf");
+  }catch(e){toast(t("pdfFail"))}
+  btn.disabled=false;btn.textContent=old;
+}
 function renderSheet(){
   const bg=$("sheetbg");if(!S.open||!findItem(S.open)){bg.hidden=true;return}
   const it=findItem(S.open),sh=$("sheet");bg.hidden=false;
@@ -674,25 +740,36 @@ function renderSheet(){
   const ph=el("div","sheetph"),gal=el("div","gal"),pics=[PH[it.n]].concat(G[it.n]||[]);
   pics.forEach((p,ix)=>{const f=el("figure");f.style.background=bands(it.c);const i=fimg(p,"l",it.n);if(ix>0)i.loading="lazy";f.append(i,el("figcaption","",p[1]+" · "+p[2]));gal.append(f)});
   ph.append(gal);
+  const pv=el("button","iconbtn galnav prev","‹"),nx=el("button","iconbtn galnav next","›");pv.type=nx.type="button";
   if(pics.length>1){
     const ct=el("span","galct","1 / "+pics.length);gal.onscroll=()=>{ct.textContent=(Math.round(gal.scrollLeft/gal.clientWidth)+1)+" / "+pics.length};
     const mv=d=>()=>gal.scrollBy({left:d*gal.clientWidth,behavior:"smooth"});
-    const pv=el("button","iconbtn galnav prev","‹"),nx=el("button","iconbtn galnav next","›");pv.type=nx.type="button";pv.setAttribute("aria-label","Previous photo");nx.setAttribute("aria-label","Next photo");pv.onclick=mv(-1);nx.onclick=mv(1);
+    pv.setAttribute("aria-label","Previous photo");nx.setAttribute("aria-label","Next photo");pv.onclick=mv(-1);nx.onclick=mv(1);
     ph.append(ct,pv,nx);
+  }else if(it.i){
+    const L=DATA[itemCountry(it.n)].dishes;
+    pv.setAttribute("aria-label","Previous dish");nx.setAttribute("aria-label","Next dish");pv.onclick=()=>navDish(-1);nx.onclick=()=>navDish(1);
+    ph.append(el("span","galct",(L.findIndex(v=>v.n===it.n)+1)+" / "+L.length),pv,nx);
   }
   const x=el("button","iconbtn sheetx","×");x.type="button";x.setAttribute("aria-label","Close");x.onclick=closeSheet;ph.append(x);
   const body=el("div","sheetbody");body.append(el("h2","",it.n));
-  if(pics.length>1)body.append(el("p","muted",t("swipe")));
+  body.append(el("p","muted",t(it.i?"swipeDish":"swipe")));
   body.append(el("p","",it.d[S.lang]||it.d.en));
   const rc=R[it.n],steps=rc&&(rc.s[S.lang]||rc.s.en);
-  if(canSpeak)body.append(listenBtn("sheet:"+it.n,()=>it.n+". "+(it.d[S.lang]||it.d.en)+(S.rec&&steps?" "+t("recipeT")+". "+steps.join(" "):"")));
+  const acts=el("div","row");
+  if(canSpeak)acts.append(listenBtn("sheet:"+it.n,()=>it.n+". "+(it.d[S.lang]||it.d.en)+(S.rec&&steps?" "+t("recipeT")+". "+steps.join(" "):"")));
+  if(it.i){const sb=el("button","want","↗ "+t("share"));sb.type="button";sb.onclick=()=>shareItem(it);acts.append(sb)}
+  if(acts.childElementCount)body.append(acts);
   if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(v=>ch.append(el("span","chip",v)));body.append(ch);
     if(rc){
-      if(S.rec){const bx=el("div","recipe");bx.append(el("h3","",t("recipeT")),el("small","",rc.m));const ol=el("ol");steps.forEach(v=>ol.append(el("li","",v)));bx.append(ol);body.append(bx)}
-      else{const rb=el("button","btn wide",t("recipe"));rb.type="button";rb.onclick=()=>{S.rec=true;renderSheet()};body.append(rb)}
+      const pb=el("button","btn ghost","⬇ "+t("pdf"));pb.type="button";pb.onclick=()=>recipePdf(it,pb);
+      if(S.rec){const bx=el("div","recipe");bx.append(el("h3","",t("recipeT")),el("small","",rc.m));const ol=el("ol");steps.forEach(v=>ol.append(el("li","",v)));bx.append(ol,pb);body.append(bx)}
+      else{const rb=el("button","btn",t("recipe"));rb.type="button";rb.onclick=()=>{S.rec=true;renderSheet()};const rr=el("div","row");rr.append(rb,pb);body.append(rr)}
     }
     const on=S.want.includes(it.n);const w=el("button","want",on?t("wanted"):t("want"));w.type="button";w.setAttribute("aria-pressed",String(on));
-    w.onclick=()=>{S.want=on?S.want.filter(v=>v!==it.n):[...S.want,it.n];save();render()};body.append(w)}
+    w.onclick=()=>{S.want=on?S.want.filter(v=>v!==it.n):[...S.want,it.n];save();render()};body.append(w);
+    if(S.swiped){const q=el("button","btn takequiz",t("takeQuiz")+" →");q.type="button";q.onclick=()=>go("quiz");body.append(q)}
+  }
   sh.dataset.n=it.n;sh.textContent="";sh.append(ph,body);sh.scrollTop=keep;gal.scrollLeft=keepX;
 }
 function renderCredits(){
@@ -755,6 +832,12 @@ document.addEventListener("click",e=>{
 });
 $("back").onclick=()=>go(S.screen==="credits"?(S.prev||"home"):(BACK[S.screen]||"home"));
 $("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")closeSheet()};
+(function(){const sh=$("sheet");let sx=0,sy=0,on=false;
+  sh.addEventListener("touchstart",e=>{const p=e.touches[0];sx=p.clientX;sy=p.clientY;on=e.touches.length===1},{passive:true});
+  sh.addEventListener("touchend",e=>{if(!on)return;on=false;const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)navDish(dx<0?1:-1)},{passive:true});
+  document.addEventListener("keydown",e=>{if(!S.open)return;if(e.key==="ArrowRight")navDish(1);if(e.key==="ArrowLeft")navDish(-1)});
+})();
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.open)closeSheet()});
 (function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?0:a.length/2)+Math.floor(i/2)].n);
   [...names,...names].forEach(n=>{const i=pimg(n,"s");i.loading="eager";st.append(i)});
@@ -765,7 +848,8 @@ $("regform").addEventListener("submit",e=>{e.preventDefault();const n=$("name").
   if(!n){$("regerr").textContent=t("needName");$("name").focus();return}
   $("regerr").textContent="";S.name=n;S.from=$("from").value.trim();save();go("lang")});
 
-function start(d){load();if(d&&d.screen)Object.assign(S,d);$("name").value=S.name||"";$("from").value=S.from||"";render()}
+function start(d){load();if(d&&d.screen)Object.assign(S,d);
+  const h=(location.hash||"").slice(1);if(h){const hit=Object.keys(PH).find(n=>slug(n)===h&&findItem(n));if(hit){const it=findItem(hit);S.country=itemCountry(hit);S.tab=it.i?"dishes":"things";S.screen="country";S.open=hit}}$("name").value=S.name||"";$("from").value=S.from||"";render()}
 window.claude?.hot?.snapshot?.(()=>S);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
