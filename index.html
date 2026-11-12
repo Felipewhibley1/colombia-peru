@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colombia & Perú en la Semana Internacional</title>
+<style>
+/* Layout idea: one phone-width column, one screen per step, flags as the only loud color. */
+:root{
+  --bg:#F5F5F7; --surface:#FFFFFF; --ink:#1D1D1F; --muted:#6E6E73; --line:#D2D2D7;
+  --accent:#0071E3; --on-accent:#FFFFFF; --good:#248A3D; --bad:#D70015;
+  --co-y:#FFCD00; --co-b:#003087; --co-r:#C8102E; --pe-r:#D91023; --pe-w:#FFFFFF;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
+  --r:18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
+    --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
+  --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.app{max-width:560px;margin:0 auto;padding:12px 20px 48px;display:flex;flex-direction:column;gap:20px;min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.bar{display:flex;align-items:center;gap:10px;min-height:44px}
+.bar .brand{flex:1;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--muted);line-height:1.25}
+.bar .brand b{display:block;color:var(--ink);font-weight:700}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;height:36px;min-width:36px;padding:0 12px;font-size:14px;font-weight:600}
+.iconbtn[hidden]{display:none}
+.steps{display:flex;gap:6px}
+.steps i{flex:1;height:4px;border-radius:2px;background:var(--line);transition:background .3s}
+.steps i.on{background:var(--ink)}
+
+/* screens */
+.screen{display:none;flex-direction:column;gap:20px}
+.screen.active{display:flex;animation:in .35s ease both}
+@keyframes in{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.screen.active{animation:none}.flag{animation:none!important}}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:clamp(40px,12vw,56px);line-height:1.02;font-weight:800}
+h2{font-size:30px;line-height:1.1;font-weight:700}
+h3{font-size:19px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+p{margin:0}
+.lead{font-size:19px;color:var(--muted)}
+.muted{color:var(--muted);font-size:15px}
+
+.btn{border:0;background:var(--accent);color:var(--on-accent);border-radius:999px;padding:14px 26px;font-size:17px;font-weight:600;align-self:flex-start}
+.btn.wide{align-self:stretch}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.btn:active{transform:scale(.98)}
+
+/* flags */
+.flags{position:relative;height:170px}
+.flag{position:absolute;width:58%;aspect-ratio:3/2;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18);border:1px solid var(--line)}
+.flag.co{left:0;top:0;transform:rotate(-5deg);background:linear-gradient(var(--co-y) 0 50%,var(--co-b) 50% 75%,var(--co-r) 75%);animation:sway 6s ease-in-out infinite alternate}
+.flag.pe{right:0;top:22px;transform:rotate(6deg);background:linear-gradient(90deg,var(--pe-r) 0 33.3%,var(--pe-w) 33.3% 66.6%,var(--pe-r) 66.6%);animation:sway2 6s ease-in-out infinite alternate}
+@keyframes sway{to{transform:rotate(-2deg) translateY(-4px)}}
+@keyframes sway2{to{transform:rotate(3deg) translateY(4px)}}
+.miniflag{width:44px;aspect-ratio:3/2;border-radius:6px;border:1px solid var(--line);flex:none}
+.miniflag.co{background:linear-gradient(var(--co-y) 0 50%,var(--co-b) 50% 75%,var(--co-r) 75%)}
+.miniflag.pe{background:linear-gradient(90deg,var(--pe-r) 0 33.3%,var(--pe-w) 33.3% 66.6%,var(--pe-r) 66.6%)}
+
+/* forms */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:600;color:var(--muted)}
+.field input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;width:100%}
+.err{color:var(--bad);font-size:14px;min-height:20px}
+
+/* lists */
+.grid{display:grid;gap:12px}
+.grid.two{grid-template-columns:1fr 1fr}
+.opt{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.opt b{font-size:19px}
+.opt span{font-size:13px;color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.country{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;text-align:left;display:flex;gap:16px;align-items:center}
+.country div{display:flex;flex-direction:column;gap:4px}
+.country b{font-family:var(--display);font-size:26px;letter-spacing:-.02em}
+.country span{font-size:15px;color:var(--muted)}
+.country .miniflag{width:64px}
+
+.facts{display:flex;gap:10px;flex-wrap:wrap}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:14px}
+.fact small{display:block;color:var(--muted);font-size:12px}
+.tabs{display:flex;background:var(--line);border-radius:12px;padding:3px;gap:3px}
+.tabs button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-size:15px;font-weight:600}
+.tabs button[aria-selected="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;gap:14px;align-items:flex-start}
+.card .body{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.card p{font-size:15px;color:var(--muted)}
+.plate{flex:none;width:72px;height:72px;border-radius:50%;background:#FBFBFD;border:1px solid var(--line);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.plate i{width:50px;height:50px;border-radius:50%;display:block}
+.post{flex:none;width:72px;height:72px;border-radius:14px;border:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.want{align-self:flex-start;border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600;color:var(--accent)}
+.want[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.tally{font-size:14px;color:var(--muted)}
+
+.quizcard{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 20px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+.quizcard .plate{width:110px;height:110px}.quizcard .plate i{width:78px;height:78px}
+.fb{min-height:24px;font-weight:600}
+.fb.ok{color:var(--good)}.fb.no{color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+footer{margin-top:auto;font-size:12px;color:var(--muted);text-align:center;padding-top:12px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <button class="iconbtn" id="back" hidden aria-label="Back">‹</button>
+    <div class="brand"><b>Mission College</b><span id="evt">International Week</span></div>
+    <button class="iconbtn" id="langbtn" aria-label="Language">EN</button>
+  </div>
+  <div class="steps" id="steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+
+  <section class="screen active" id="s-home">
+    <div class="flags" aria-hidden="true"><div class="flag co"></div><div class="flag pe"></div></div>
+    <h1>Colombia <span style="color:var(--muted)">&amp;</span> Perú</h1>
+    <p class="lead" data-t="heroSub"></p>
+    <button class="btn" data-go="register" data-t="start"></button>
+  </section>
+
+  <section class="screen" id="s-register">
+    <h2 data-t="regTitle"></h2>
+    <form id="regform" class="grid" novalidate>
+      <div class="field"><label for="name" data-t="nameLb"></label><input id="name" autocomplete="given-name" maxlength="40"></div>
+      <div class="field"><label for="from" data-t="fromLb"></label><input id="from" autocomplete="country-name" maxlength="40"></div>
+      <div class="err" id="regerr" role="alert"></div>
+      <button class="btn wide" type="submit" data-t="cont"></button>
+      <p class="muted" data-t="regHint"></p>
+    </form>
+  </section>
+
+  <section class="screen" id="s-lang">
+    <h2 data-t="langTitle"></h2>
+    <div class="grid two" id="langs"></div>
+    <button class="btn wide" data-go="intro" data-t="cont"></button>
+  </section>
+
+  <section class="screen" id="s-intro">
+    <p class="muted" id="hello"></p>
+    <h2 data-t="introTitle"></h2>
+    <p data-t="intro1"></p>
+    <p data-t="intro2"></p>
+    <button class="btn wide" data-go="choose" data-t="choose"></button>
+  </section>
+
+  <section class="screen" id="s-choose">
+    <h2 data-t="choose"></h2>
+    <button class="country" data-country="co"><i class="miniflag co"></i><div><b>Colombia</b><span data-t="coTag"></span></div></button>
+    <button class="country" data-country="pe"><i class="miniflag pe"></i><div><b>Perú</b><span data-t="peTag"></span></div></button>
+    <p class="tally" id="tally"></p>
+    <button class="btn ghost wide" data-go="quiz" data-t="quiz"></button>
+  </section>
+
+  <section class="screen" id="s-country">
+    <div style="display:flex;gap:14px;align-items:center"><i class="miniflag" id="cflag"></i><h2 id="cname"></h2></div>
+    <div class="facts" id="facts"></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-dishes" data-tab="dishes" data-t="dishes"></button>
+      <button role="tab" id="tab-things" data-tab="things" data-t="things"></button>
+    </div>
+    <div class="grid" id="list"></div>
+  </section>
+
+  <section class="screen" id="s-quiz">
+    <h2 data-t="quizQ"></h2>
+    <div class="quizcard" id="quizcard"></div>
+  </section>
+
+  <footer>Mission College · International Week · Colombia &amp; Perú</footer>
+</div>
+
+<script>
+const LANGS=[["en","English"],["es","Español"],["zh","中文"],["ja","日本語"],["vi","Tiếng Việt"],["ko","한국어"]];
+const T={
+evt:{en:"International Week",es:"Semana Internacional",zh:"国际周",ja:"インターナショナルウィーク",vi:"Tuần lễ Quốc tế",ko:"국제 주간"},
+heroSub:{en:"Two countries, one table. Explore their landscapes and the dishes people love.",es:"Dos países, una sola mesa. Descubre sus paisajes y los platos que más queremos.",zh:"两个国家，一张餐桌。探索它们的风景和人们喜爱的美食。",ja:"ふたつの国、ひとつの食卓。美しい風景と愛される料理を見てみましょう。",vi:"Hai đất nước, một bàn ăn. Khám phá cảnh đẹp và những món ăn được yêu thích.",ko:"두 나라, 하나의 식탁. 아름다운 풍경과 사랑받는 음식을 만나 보세요."},
+start:{en:"Start",es:"Empezar",zh:"开始",ja:"はじめる",vi:"Bắt đầu",ko:"시작하기"},
+regTitle:{en:"First, tell us who you are",es:"Primero, cuéntanos quién eres",zh:"先告诉我们你是谁",ja:"まず、あなたのことを教えてください",vi:"Trước tiên, hãy cho chúng tôi biết bạn là ai",ko:"먼저, 자신을 소개해 주세요"},
+nameLb:{en:"Your name",es:"Tu nombre",zh:"你的名字",ja:"お名前",vi:"Tên của bạn",ko:"이름"},
+fromLb:{en:"Where are you from? (optional)",es:"¿De dónde eres? (opcional)",zh:"你来自哪里？（选填）",ja:"ご出身は？（任意）",vi:"Bạn đến từ đâu? (không bắt buộc)",ko:"어디에서 오셨나요? (선택)"},
+regHint:{en:"Your name stays on this phone. We only use it to greet you.",es:"Tu nombre se queda en este teléfono. Solo lo usamos para saludarte.",zh:"你的名字只保存在这部手机上，仅用于向你问好。",ja:"お名前はこの端末にのみ保存され、ごあいさつにだけ使います。",vi:"Tên của bạn chỉ lưu trên điện thoại này và chỉ dùng để chào bạn.",ko:"이름은 이 휴대폰에만 저장되며 인사할 때만 사용합니다."},
+needName:{en:"Please type your name to continue.",es:"Escribe tu nombre para continuar.",zh:"请输入你的名字再继续。",ja:"続けるにはお名前を入力してください。",vi:"Hãy nhập tên của bạn để tiếp tục.",ko:"계속하려면 이름을 입력해 주세요."},
+cont:{en:"Continue",es:"Continuar",zh:"继续",ja:"次へ",vi:"Tiếp tục",ko:"계속"},
+langTitle:{en:"Choose your language",es:"Elige tu idioma",zh:"选择语言",ja:"言語を選んでください",vi:"Chọn ngôn ngữ",ko:"언어를 선택하세요"},
+hello:{en:"Hello, {n}!",es:"¡Hola, {n}!",zh:"你好，{n}！",ja:"こんにちは、{n}さん！",vi:"Xin chào, {n}!",ko:"안녕하세요, {n} 님!"},
+introTitle:{en:"Neighbors in South America",es:"Vecinos en Suramérica",zh:"南美洲的两位邻居",ja:"南米のおとなりどうし",vi:"Hai người hàng xóm ở Nam Mỹ",ko:"남아메리카의 이웃 나라"},
+intro1:{en:"Colombia and Peru share a border in the Amazon, the Andes mountains, the Spanish language and a deep love of food and music.",es:"Colombia y Perú comparten frontera en la Amazonía, la cordillera de los Andes, el idioma español y un amor profundo por la comida y la música.",zh:"哥伦比亚和秘鲁在亚马孙地区接壤，同享安第斯山脉和西班牙语，也同样热爱美食与音乐。",ja:"コロンビアとペルーはアマゾンで国境を接し、アンデス山脈とスペイン語、そして食と音楽への深い愛を分かち合っています。",vi:"Colombia và Peru có chung đường biên giới ở Amazon, chung dãy Andes, tiếng Tây Ban Nha và tình yêu sâu đậm với ẩm thực và âm nhạc.",ko:"콜롬비아와 페루는 아마존에서 국경을 맞대고 있으며, 안데스산맥과 스페인어, 그리고 음식과 음악에 대한 깊은 사랑을 함께 나눕니다."},
+intro2:{en:"From Caribbean beaches to Inca cities in the clouds, each country cooks with what its land gives: corn, potatoes, plantain, fresh fish and chili peppers.",es:"De las playas del Caribe a las ciudades incas entre las nubes, cada país cocina con lo que da su tierra: maíz, papa, plátano, pescado fresco y ají.",zh:"从加勒比海滩到云端的印加古城，两国都用土地的馈赠做菜：玉米、土豆、大蕉、鲜鱼和辣椒。",ja:"カリブ海のビーチから雲の上のインカの都まで。どちらの国も、とうもろこし、じゃがいも、プランテン、新鮮な魚、唐辛子など大地の恵みで料理します。",vi:"Từ bãi biển Caribe đến thành phố Inca giữa mây trời, mỗi nước nấu ăn bằng sản vật quê hương: ngô, khoai tây, chuối nấu, cá tươi và ớt.",ko:"카리브해 해변에서 구름 위의 잉카 도시까지, 두 나라는 옥수수, 감자, 플랜틴, 신선한 생선, 고추 등 땅이 주는 재료로 요리합니다."},
+choose:{en:"Choose a country",es:"Elige un país",zh:"选择一个国家",ja:"国を選ぶ",vi:"Chọn một quốc gia",ko:"나라 선택하기"},
+coTag:{en:"Coffee, two oceans and more bird species than any other country",es:"Café, dos océanos y más especies de aves que cualquier otro país",zh:"咖啡、两大洋，以及全球最多的鸟类种类",ja:"コーヒー、ふたつの海、そして世界一多い鳥の種類",vi:"Cà phê, hai đại dương và nhiều loài chim nhất thế giới",ko:"커피, 두 개의 바다, 그리고 세계에서 가장 많은 조류 종"},
+peTag:{en:"Home of Machu Picchu and one of the world's great cuisines",es:"Tierra de Machu Picchu y de una de las grandes cocinas del mundo",zh:"马丘比丘的故乡，拥有世界顶级的美食",ja:"マチュピチュの国、世界有数の美食の国",vi:"Quê hương của Machu Picchu và một trong những nền ẩm thực tuyệt vời nhất thế giới",ko:"마추픽추의 나라, 세계적인 미식의 나라"},
+things:{en:"Beautiful things",es:"Cosas lindas",zh:"美丽风光",ja:"美しいもの",vi:"Những điều tuyệt đẹp",ko:"아름다운 것들"},
+dishes:{en:"Typical dishes",es:"Platos típicos",zh:"特色美食",ja:"名物料理",vi:"Món ăn đặc trưng",ko:"대표 음식"},
+want:{en:"I want to try it",es:"Quiero probarlo",zh:"我想尝尝",ja:"食べてみたい",vi:"Tôi muốn thử",ko:"먹어 보고 싶어요"},
+wanted:{en:"On my list ✓",es:"En mi lista ✓",zh:"已加入清单 ✓",ja:"リストに追加 ✓",vi:"Đã thêm ✓",ko:"목록에 추가 ✓"},
+tally:{en:"Dishes on your tasting list: {n}",es:"Platos en tu lista para probar: {n}",zh:"你想尝的菜：{n} 道",ja:"食べてみたい料理：{n}品",vi:"Món bạn muốn thử: {n}",ko:"먹어 보고 싶은 음식: {n}개"},
+capital:{en:"Capital",es:"Capital",zh:"首都",ja:"首都",vi:"Thủ đô",ko:"수도"},
+currency:{en:"Currency",es:"Moneda",zh:"货币",ja:"通貨",vi:"Tiền tệ",ko:"화폐"},
+quiz:{en:"Play the dish quiz",es:"Jugar el quiz de platos",zh:"玩美食小测验",ja:"料理クイズに挑戦",vi:"Chơi đố vui món ăn",ko:"음식 퀴즈 풀기"},
+quizQ:{en:"Where is this dish from?",es:"¿De dónde es este plato?",zh:"这道菜来自哪里？",ja:"この料理はどこの国？",vi:"Món này đến từ đâu?",ko:"이 음식은 어느 나라 음식일까요?"},
+ok:{en:"Correct!",es:"¡Correcto!",zh:"答对了！",ja:"正解！",vi:"Chính xác!",ko:"정답!"},
+no:{en:"Not quite. It is from {c}.",es:"Casi. Es de {c}.",zh:"不对哦，它来自{c}。",ja:"おしい！正解は{c}です。",vi:"Chưa đúng. Món này của {c}.",ko:"아쉬워요. {c} 음식입니다."},
+next:{en:"Next",es:"Siguiente",zh:"下一题",ja:"次へ",vi:"Tiếp",ko:"다음"},
+score:{en:"You got {s} of {t}",es:"Acertaste {s} de {t}",zh:"你答对了 {s} / {t}",ja:"{t}問中{s}問正解",vi:"Bạn đúng {s} trên {t}",ko:"{t}문제 중 {s}문제 정답"},
+again:{en:"Play again",es:"Jugar otra vez",zh:"再玩一次",ja:"もう一度",vi:"Chơi lại",ko:"다시 하기"}
+};
+const CN={co:"Colombia",pe:"Perú"};
+const DATA={
+co:{capital:"Bogotá",currency:"Peso (COP)",
+dishes:[
+{n:"Bandeja paisa",c:["#7B3F1D","#F4F1E8","#E9A23B","#F7D154","#6FA34A"],i:"frijoles · arroz · chicharrón · huevo · aguacate",d:{en:"A huge platter from Antioquia: beans, rice, ground beef, crispy pork belly, fried egg, sweet plantain, avocado and an arepa.",es:"Un plato enorme de Antioquia: frijoles, arroz, carne molida, chicharrón, huevo frito, plátano maduro, aguacate y arepa.",zh:"来自安蒂奥基亚的超大拼盘：豆子、米饭、牛肉末、脆皮五花肉、煎蛋、甜大蕉、牛油果和玉米饼。",ja:"アンティオキア地方の大皿料理。豆、ごはん、ひき肉、カリカリの豚バラ、目玉焼き、甘いプランテン、アボカド、アレパがのります。",vi:"Đĩa lớn từ vùng Antioquia: đậu, cơm, thịt bò xay, ba chỉ giòn, trứng ốp la, chuối chín, bơ và bánh arepa.",ko:"안티오키아 지방의 푸짐한 한 접시: 콩, 밥, 다진 소고기, 바삭한 삼겹살 튀김, 달걀 프라이, 단 플랜틴, 아보카도, 아레파."}},
+{n:"Ajiaco",c:["#F0DC8C","#F7D154","#FBF6E4","#6FA34A"],i:"pollo · tres papas · mazorca · guascas",d:{en:"Bogotá's chicken soup, made with three kinds of potato, corn on the cob and an herb called guascas.",es:"La sopa de pollo de Bogotá, con tres tipos de papa, mazorca y una hierba llamada guascas.",zh:"波哥大的鸡汤，用三种土豆、玉米棒和一种叫 guascas 的香草熬成。",ja:"ボゴタのチキンスープ。3種類のじゃがいも、とうもろこし、グアスカスというハーブで作ります。",vi:"Súp gà của Bogotá, nấu với ba loại khoai tây, ngô và một loại rau thơm tên guascas.",ko:"보고타의 닭고기 수프. 세 가지 감자와 옥수수, 구아스카스라는 허브로 끓입니다."}},
+{n:"Arepa",c:["#F6E7B4","#EBD08A","#FFFDF5"],i:"maíz · queso · mantequilla",d:{en:"A round corn cake cooked on the grill. Colombians eat it every day, plain, with cheese or stuffed.",es:"Una torta redonda de maíz hecha a la parrilla. En Colombia se come todos los días: sola, con queso o rellena.",zh:"烤制的圆形玉米饼。哥伦比亚人天天吃，可以原味、加奶酪或夹馅。",ja:"鉄板で焼く丸いとうもろこしのパン。そのまま、チーズをのせて、具をはさんで、毎日食べます。",vi:"Bánh ngô tròn nướng. Người Colombia ăn hằng ngày: ăn không, với phô mai hoặc kẹp nhân.",ko:"그릴에 구운 둥근 옥수수 빵. 콜롬비아 사람들은 그냥, 치즈를 올려, 또는 속을 채워 매일 먹습니다."}},
+{n:"Sancocho",c:["#D9A441","#F7D154","#F1E3C0","#6FA34A","#C97B3A"],i:"carne · plátano · yuca · mazorca",d:{en:"A hearty stew of meat, plantain, cassava and corn. It is the dish for Sunday with the whole family.",es:"Un caldo sustancioso de carne, plátano, yuca y mazorca. Es el plato del domingo con toda la familia.",zh:"用肉、大蕉、木薯和玉米炖成的浓汤，是周日全家团聚时的菜。",ja:"肉、プランテン、キャッサバ、とうもろこしの具だくさんスープ。日曜日に家族みんなで食べます。",vi:"Món hầm đậm đà gồm thịt, chuối nấu, sắn và ngô. Đây là món Chủ nhật của cả gia đình.",ko:"고기, 플랜틴, 카사바, 옥수수를 넣은 든든한 스튜. 일요일에 온 가족이 함께 먹습니다."}},
+{n:"Empanadas",c:["#E2A33A","#C97B3A","#F3C766"],i:"masa de maíz · carne · papa · ají",d:{en:"Crispy fried corn turnovers filled with meat and potato, eaten with a spicy sauce called ají.",es:"Crujientes, fritas y de masa de maíz, rellenas de carne y papa. Se comen con ají.",zh:"酥脆的炸玉米馅饼，里面是肉和土豆，蘸辣酱 ají 吃。",ja:"とうもろこし生地で肉とじゃがいもを包んで揚げたもの。アヒという辛いソースで食べます。",vi:"Bánh ngô chiên giòn nhân thịt và khoai tây, ăn kèm sốt cay ají.",ko:"옥수수 반죽에 고기와 감자를 넣어 바삭하게 튀긴 만두. 매콤한 아히 소스와 함께 먹습니다."}},
+{n:"Buñuelos",c:["#D9963A","#E9B45C","#C97B3A"],i:"queso costeño · almidón de yuca",d:{en:"Golden fried balls of cheese dough, crisp outside and soft inside. A Christmas favorite.",es:"Bolitas doradas de masa con queso, crocantes por fuera y suaves por dentro. Infaltables en Navidad.",zh:"金黄的炸奶酪面团球，外脆内软，是圣诞节的最爱。",ja:"チーズ入り生地の揚げボール。外はカリッと中はふんわり。クリスマスの定番です。",vi:"Viên bột phô mai chiên vàng, ngoài giòn trong mềm. Món được yêu thích dịp Giáng sinh.",ko:"치즈 반죽을 동그랗게 튀긴 간식. 겉은 바삭하고 속은 부드러우며 크리스마스에 꼭 먹습니다."}}
+],
+things:[
+{n:"Caño Cristales",c:["#D91A5B","#F7D154","#2FA36B","#1E6FD9"],d:{en:"A river that turns red, yellow, green and blue for a few months each year. People call it the river of five colors.",es:"Un río que se pinta de rojo, amarillo, verde y azul unos meses al año. Lo llaman el río de los cinco colores.",zh:"每年有几个月会变成红、黄、绿、蓝色的河流，被称为“五彩河”。",ja:"毎年数か月だけ赤、黄、緑、青に染まる川。「五色の川」と呼ばれています。",vi:"Dòng sông chuyển màu đỏ, vàng, xanh lá và xanh dương vài tháng mỗi năm, được gọi là sông năm màu.",ko:"해마다 몇 달 동안 빨강, 노랑, 초록, 파랑으로 물드는 강. '다섯 빛깔의 강'이라 불립니다."}},
+{n:"Valle de Cocora",c:["#BFE3F5","#7DBA6A","#3E8A4B"],d:{en:"A green valley with wax palms, the tallest palm trees in the world and Colombia's national tree.",es:"Un valle verde con palmas de cera, las palmas más altas del mundo y el árbol nacional de Colombia.",zh:"长满蜡棕榈的绿色山谷。蜡棕榈是世界上最高的棕榈树，也是哥伦比亚的国树。",ja:"緑の谷に立つロウヤシは世界一背の高いヤシで、コロンビアの国の木です。",vi:"Thung lũng xanh với cọ sáp, loài cọ cao nhất thế giới và là quốc thụ của Colombia.",ko:"세계에서 가장 키가 큰 야자수이자 콜롬비아의 국목인 왁스야자가 자라는 푸른 계곡."}},
+{n:"Cartagena",c:["#F4B63F","#EE6C4D","#3BA7C9"],d:{en:"A walled city on the Caribbean with colorful colonial houses and balconies full of flowers.",es:"Una ciudad amurallada frente al Caribe, con casas coloniales de colores y balcones llenos de flores.",zh:"加勒比海边的古城墙之城，有五彩的殖民时期房屋和开满鲜花的阳台。",ja:"カリブ海に面した城壁の街。カラフルなコロニアル様式の家と花いっぱいのバルコニーが並びます。",vi:"Thành phố có tường thành bên biển Caribe, với những ngôi nhà thuộc địa rực rỡ và ban công đầy hoa.",ko:"카리브해에 면한 성곽 도시. 알록달록한 식민지 시대 집과 꽃이 가득한 발코니가 있습니다."}},
+{n:"Eje Cafetero",c:["#3E8A4B","#7DBA6A","#8B4A2B"],d:{en:"The coffee region, where families grow some of the world's best coffee on steep green mountains. It is a UNESCO World Heritage site.",es:"La región donde las familias cultivan uno de los mejores cafés del mundo en montañas verdes y empinadas. Es Patrimonio de la Humanidad.",zh:"咖啡产区。农户在陡峭的青山上种出世界顶级的咖啡，这里是联合国教科文组织世界遗产。",ja:"急な緑の山で家族が世界有数のコーヒーを育てる地域。ユネスコの世界遺産です。",vi:"Vùng cà phê, nơi các gia đình trồng loại cà phê ngon hàng đầu thế giới trên núi xanh dốc đứng. Đây là Di sản Thế giới UNESCO.",ko:"가파른 초록 산에서 가족들이 세계 최고 수준의 커피를 기르는 지역. 유네스코 세계유산입니다."}},
+{n:"Carnaval de Barranquilla",c:["#F7D154","#D91A5B","#1E6FD9","#2FA36B"],d:{en:"Four days of parades, masks and cumbia dancing. It is one of the biggest carnivals in the world.",es:"Cuatro días de desfiles, máscaras y cumbia. Es uno de los carnavales más grandes del mundo.",zh:"四天的游行、面具和昆比亚舞，是世界上最盛大的狂欢节之一。",ja:"パレード、仮面、クンビアの踊りが4日間続く、世界最大級のカーニバルです。",vi:"Bốn ngày diễu hành, mặt nạ và điệu nhảy cumbia. Đây là một trong những lễ hội carnival lớn nhất thế giới.",ko:"나흘 동안 퍼레이드와 가면, 쿰비아 춤이 이어지는 세계 최대 규모의 카니발 중 하나."}},
+{n:"Aves",c:["#1E6FD9","#F7D154","#D91A5B"],d:{en:"Colombia has more than 1,900 kinds of birds, more than any other country, from hummingbirds to the Andean condor.",es:"Colombia tiene más de 1.900 especies de aves, más que cualquier otro país: desde colibríes hasta el cóndor de los Andes.",zh:"哥伦比亚有1900多种鸟类，居世界第一，从蜂鸟到安第斯神鹰应有尽有。",ja:"コロンビアにはハチドリからアンデスコンドルまで1,900種以上の鳥がいて、その数は世界一です。",vi:"Colombia có hơn 1.900 loài chim, nhiều hơn bất kỳ nước nào, từ chim ruồi đến thần ưng Andes.",ko:"콜롬비아에는 벌새부터 안데스콘도르까지 1,900종이 넘는 새가 살며, 이는 세계에서 가장 많습니다."}}
+]},
+pe:{capital:"Lima",currency:"Sol (PEN)",
+dishes:[
+{n:"Ceviche",c:["#FBF6EC","#B04A8C","#E8853A","#F7D154","#8CC152"],i:"pescado · limón · cebolla · ají · camote",d:{en:"Peru's national dish: fresh raw fish cured in lime juice with red onion and chili, served with sweet potato and corn.",es:"El plato bandera del Perú: pescado fresco curado en limón con cebolla roja y ají, servido con camote y choclo.",zh:"秘鲁的国菜：新鲜生鱼用青柠汁腌制，配红洋葱和辣椒，搭配红薯和玉米。",ja:"ペルーの国民食。新鮮な生の魚をライム果汁でしめ、赤玉ねぎと唐辛子を合わせ、さつまいもととうもろこしを添えます。",vi:"Món quốc hồn của Peru: cá tươi sống ngâm nước chanh với hành tím và ớt, ăn kèm khoai lang và ngô.",ko:"페루의 국민 음식. 신선한 날생선을 라임즙에 절여 적양파와 고추를 곁들이고 고구마, 옥수수와 함께 냅니다."}},
+{n:"Lomo saltado",c:["#6B3A22","#D93B2B","#E9B45C","#F4F1E8"],i:"res · cebolla · tomate · sillao · papas",d:{en:"Beef stir-fried over high heat with onion, tomato and soy sauce, served with fries and rice. It was born from Chinese cooking in Peru.",es:"Carne de res salteada a fuego alto con cebolla, tomate y sillao, con papas fritas y arroz. Nació del encuentro con la cocina china.",zh:"大火快炒牛肉、洋葱、番茄和酱油，配薯条和米饭。这道菜源自秘鲁的中餐传统。",ja:"牛肉、玉ねぎ、トマトをしょうゆで強火で炒め、フライドポテトとごはんを添えます。ペルーの中華料理から生まれました。",vi:"Thịt bò xào lửa lớn với hành tây, cà chua và nước tương, ăn kèm khoai tây chiên và cơm. Món này ra đời từ ẩm thực Trung Hoa ở Peru.",ko:"소고기를 양파, 토마토, 간장과 함께 센 불에 볶아 감자튀김과 밥을 곁들입니다. 페루의 중국 요리에서 탄생했습니다."}},
+{n:"Ají de gallina",c:["#F2C230","#F7E08A","#F4F1E8","#3B3B3B"],i:"pollo · ají amarillo · nueces · arroz",d:{en:"Shredded chicken in a creamy yellow chili sauce, served with rice, potato and a black olive.",es:"Pollo deshilachado en una crema de ají amarillo, servido con arroz, papa y una aceituna negra.",zh:"鸡丝配奶油黄辣椒酱，搭配米饭、土豆和一颗黑橄榄。",ja:"ほぐした鶏肉を黄色い唐辛子のクリームソースで煮込み、ごはん、じゃがいも、黒オリーブを添えます。",vi:"Gà xé trong sốt kem ớt vàng, ăn kèm cơm, khoai tây và một quả ô liu đen.",ko:"잘게 찢은 닭고기를 노란 고추 크림소스에 버무려 밥, 감자, 블랙 올리브와 함께 냅니다."}},
+{n:"Causa limeña",c:["#F5CB3C","#F7E08A","#8CC152","#F4F1E8"],i:"papa amarilla · limón · ají · pollo o atún",d:{en:"A cold layered cake of yellow potato with lime and chili, filled with chicken or tuna and avocado.",es:"Un pastel frío de papa amarilla con limón y ají, relleno de pollo o atún y palta.",zh:"冷食的黄土豆泥千层，用青柠和辣椒调味，夹着鸡肉或金枪鱼和牛油果。",ja:"ライムと唐辛子で味つけした黄色いじゃがいもを重ね、鶏肉かツナ、アボカドをはさんだ冷たい料理です。",vi:"Bánh khoai tây vàng xếp lớp ăn lạnh, nêm chanh và ớt, nhân gà hoặc cá ngừ và bơ.",ko:"라임과 고추로 맛을 낸 노란 감자를 층층이 쌓고 닭고기나 참치, 아보카도를 넣은 차가운 요리."}},
+{n:"Anticuchos",c:["#7A2E1D","#B5482A","#F7D154","#E9B45C"],i:"corazón de res · ají panca · papa · choclo",d:{en:"Skewers of marinated beef heart grilled over charcoal. They are the favorite street food at night.",es:"Brochetas de corazón de res marinado, asadas al carbón. Son la comida callejera favorita de la noche.",zh:"腌制牛心串，炭火烤制，是夜晚最受欢迎的街头小吃。",ja:"味つけした牛ハツの串を炭火で焼いたもの。夜の屋台でいちばん人気です。",vi:"Xiên tim bò ướp nướng than. Đây là món ăn đường phố được yêu thích nhất về đêm.",ko:"양념한 소 염통을 꼬치에 꿰어 숯불에 구운 음식. 밤거리에서 가장 사랑받는 길거리 음식입니다."}},
+{n:"Picarones",c:["#C9772E","#E2A33A","#5B2C12"],i:"zapallo · camote · miel de chancaca",d:{en:"Rings of fried dough made with squash and sweet potato, covered in a dark sugarcane syrup.",es:"Aros fritos de masa de zapallo y camote, bañados en miel de chancaca.",zh:"用南瓜和红薯做的炸面圈，淋上深色的蔗糖浆。",ja:"かぼちゃとさつまいもの生地を輪にして揚げ、黒糖のシロップをかけたお菓子です。",vi:"Bánh vòng chiên làm từ bí và khoai lang, rưới mật mía sẫm màu.",ko:"호박과 고구마 반죽을 고리 모양으로 튀겨 진한 사탕수수 시럽을 뿌린 디저트."}}
+],
+things:[
+{n:"Machu Picchu",c:["#BFE3F5","#6FA34A","#8C8C7A"],d:{en:"An Inca city built in the 1400s on top of a mountain. It is one of the New Seven Wonders of the World.",es:"Una ciudad inca construida en el siglo XV en lo alto de una montaña. Es una de las nuevas siete maravillas del mundo.",zh:"15世纪建在山顶的印加古城，是世界新七大奇迹之一。",ja:"1400年代に山の上に築かれたインカの都市。新・世界七不思議のひとつです。",vi:"Thành phố Inca xây trên đỉnh núi vào thế kỷ 15. Đây là một trong Bảy kỳ quan thế giới mới.",ko:"1400년대에 산 정상에 세워진 잉카 도시. 세계 신(新) 7대 불가사의 중 하나입니다."}},
+{n:"Vinicunca",c:["#C9483B","#F2C230","#7DBAA0","#B07AA1"],d:{en:"The Rainbow Mountain. Minerals paint its slopes in stripes of red, yellow and turquoise, more than 5,000 meters high.",es:"La Montaña de Siete Colores. Los minerales pintan sus laderas en franjas rojas, amarillas y turquesa, a más de 5.000 metros de altura.",zh:"彩虹山。矿物质把山坡染成红、黄、青绿色的条纹，海拔超过5000米。",ja:"レインボーマウンテン。標高5,000m以上の山肌を、鉱物が赤、黄、ターコイズのしま模様に染めています。",vi:"Núi Cầu Vồng. Khoáng chất nhuộm sườn núi thành những dải đỏ, vàng và xanh ngọc ở độ cao hơn 5.000 mét.",ko:"무지개산. 해발 5,000m가 넘는 산비탈을 광물이 빨강, 노랑, 청록색 줄무늬로 물들입니다."}},
+{n:"Lago Titicaca",c:["#1E6FD9","#5FB0E8","#F2C230"],d:{en:"The highest lake in the world that large boats can sail, at 3,812 meters. Families live on floating islands made of reeds.",es:"El lago navegable más alto del mundo, a 3.812 metros. Hay familias que viven en islas flotantes hechas de totora.",zh:"世界上海拔最高的通航湖泊，海拔3812米。有些家庭住在芦苇编成的浮岛上。",ja:"標高3,812m、大型船が航行できる世界一高い湖。葦で作った浮島に暮らす家族もいます。",vi:"Hồ cao nhất thế giới mà tàu lớn đi lại được, ở độ cao 3.812 mét. Có những gia đình sống trên đảo nổi làm từ cói.",ko:"해발 3,812m, 큰 배가 다닐 수 있는 세계에서 가장 높은 호수. 갈대로 만든 떠 있는 섬에 사는 가족들도 있습니다."}},
+{n:"Líneas de Nazca",c:["#D9B98A","#C29A6B","#8B5E3C"],d:{en:"Giant drawings of a hummingbird, a monkey and a spider made in the desert about 2,000 years ago. You can only see them whole from the air.",es:"Dibujos gigantes de un colibrí, un mono y una araña trazados en el desierto hace unos 2.000 años. Solo se ven completos desde el aire.",zh:"约两千年前刻画在沙漠上的巨型蜂鸟、猴子和蜘蛛图案，只有从空中才能看到全貌。",ja:"約2,000年前に砂漠に描かれたハチドリ、サル、クモの巨大な絵。全体は空からしか見えません。",vi:"Những hình vẽ khổng lồ chim ruồi, khỉ và nhện trên sa mạc từ khoảng 2.000 năm trước. Chỉ nhìn thấy trọn vẹn từ trên không.",ko:"약 2,000년 전 사막에 그려진 벌새, 원숭이, 거미의 거대한 그림. 하늘에서만 전체를 볼 수 있습니다."}},
+{n:"Amazonía",c:["#1F6B3A","#3E8A4B","#8B5E3C"],d:{en:"Rainforest covers more than half of Peru. Pink river dolphins, macaws and jaguars live there.",es:"La selva cubre más de la mitad del Perú. Allí viven delfines rosados, guacamayos y jaguares.",zh:"雨林覆盖了秘鲁一半以上的国土，那里生活着粉红河豚、金刚鹦鹉和美洲豹。",ja:"熱帯雨林がペルーの国土の半分以上をおおい、ピンクのカワイルカ、コンゴウインコ、ジャガーがすんでいます。",vi:"Rừng mưa bao phủ hơn một nửa Peru. Cá heo hồng, vẹt đuôi dài và báo đốm sống ở đó.",ko:"열대우림이 페루 국토의 절반 이상을 덮고 있으며, 분홍돌고래, 마코앵무, 재규어가 삽니다."}},
+{n:"Cusco",c:["#B5482A","#E9B45C","#6B6B6B"],d:{en:"The old capital of the Inca Empire, 3,400 meters up in the Andes. Spanish buildings stand on perfectly fitted Inca stone walls.",es:"La antigua capital del Imperio inca, a 3.400 metros en los Andes. Los edificios españoles se levantan sobre muros incas de piedra perfectamente encajada.",zh:"印加帝国的古都，位于海拔3400米的安第斯山上。西班牙式建筑建在严丝合缝的印加石墙之上。",ja:"アンデスの標高3,400mにあるインカ帝国の古都。ぴったり組まれたインカの石壁の上にスペイン風の建物が立っています。",vi:"Cố đô của Đế chế Inca, ở độ cao 3.400 mét trên dãy Andes. Các tòa nhà Tây Ban Nha đứng trên những bức tường đá Inca ghép khít hoàn hảo.",ko:"안데스 해발 3,400m에 있는 잉카 제국의 옛 수도. 빈틈없이 맞물린 잉카 석벽 위에 스페인식 건물이 서 있습니다."}}
+]}
+};
+
+let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null};
+const ORDER=["home","register","lang","intro","choose"];
+const BACK={register:"home",lang:"register",intro:"lang",choose:"intro",country:"choose",quiz:"choose"};
+const $=id=>document.getElementById(id);
+const t=(k,v)=>{let s=(T[k][S.lang]||T[k].en);if(v)for(const x in v)s=s.replace("{"+x+"}",v[x]);return s};
+function save(){try{localStorage.setItem("cope",JSON.stringify({lang:S.lang,name:S.name,from:S.from,want:S.want}))}catch(e){}}
+function load(){try{Object.assign(S,JSON.parse(localStorage.getItem("cope")||"{}"))}catch(e){}}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function conic(c){const n=c.length;return "conic-gradient("+c.map((x,i)=>x+" "+(i*360/n)+"deg "+((i+1)*360/n)+"deg").join(",")+")"}
+function bands(c){const n=c.length;return "linear-gradient(160deg,"+c.map((x,i)=>x+" "+(i*100/n)+"% "+((i+1)*100/n)+"%").join(",")+")"}
+
+function render(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  $("evt").textContent=t("evt");
+  $("langbtn").textContent=S.lang.toUpperCase();
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id==="s-"+S.screen));
+  $("back").hidden=!BACK[S.screen];
+  const idx=ORDER.indexOf(S.screen);const step=idx<0?5:idx+1;
+  [...$("steps").children].forEach((d,i)=>d.classList.toggle("on",i<step));
+  // languages
+  const L=$("langs");L.textContent="";
+  LANGS.forEach(([c,n])=>{const b=el("button","opt");b.type="button";b.setAttribute("aria-pressed",String(c===S.lang));b.append(el("b","",n),el("span","",c.toUpperCase()));b.onclick=()=>{S.lang=c;save();render()};L.append(b)});
+  $("hello").textContent=S.name?t("hello",{n:S.name}):"";
+  $("tally").textContent=S.want.length?t("tally",{n:S.want.length}):"";
+  if(S.screen==="country")renderCountry();
+  if(S.screen==="quiz")renderQuiz();
+}
+function renderCountry(){
+  const C=DATA[S.country];
+  $("cflag").className="miniflag "+S.country;$("cname").textContent=CN[S.country];
+  const F=$("facts");F.textContent="";
+  [["capital",C.capital],["currency",C.currency]].forEach(([k,v])=>{const f=el("div","fact");f.append(el("small","",t(k)),document.createTextNode(v));F.append(f)});
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===S.tab)));
+  const list=$("list");list.textContent="";
+  C[S.tab].forEach(it=>{
+    const card=el("article","card");
+    let pic;
+    if(S.tab==="dishes"){pic=el("div","plate");const f=el("i");f.style.background=conic(it.c);pic.append(f)}
+    else{pic=el("div","post");pic.style.background=bands(it.c)}
+    const body=el("div","body");body.append(el("h3","",it.n),el("p","",it.d[S.lang]||it.d.en));
+    if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(x=>ch.append(el("span","chip",x)));body.append(ch);
+      const on=S.want.includes(it.n);const w=el("button","want",on?t("wanted"):t("want"));w.type="button";w.setAttribute("aria-pressed",String(on));
+      w.onclick=()=>{S.want=on?S.want.filter(x=>x!==it.n):[...S.want,it.n];save();render()};body.append(w)}
+    card.append(pic,body);list.append(card)});
+}
+function newQuiz(){
+  const all=[];for(const c of["co","pe"])DATA[c].dishes.forEach(d=>all.push({c,d}));
+  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}
+  S.quiz={q:all.slice(0,6).map(x=>({c:x.c,n:x.d.n})),i:0,score:0,ans:null};
+}
+function findDish(n){for(const c of["co","pe"]){const d=DATA[c].dishes.find(x=>x.n===n);if(d)return d}}
+function renderQuiz(){
+  if(!S.quiz)newQuiz();
+  const Q=S.quiz,box=$("quizcard");box.textContent="";
+  if(Q.i>=Q.q.length){
+    box.append(el("h3","",t("score",{s:Q.score,t:Q.q.length})));
+    const again=el("button","btn",t("again"));again.onclick=()=>{newQuiz();render()};
+    const home=el("button","btn ghost",t("choose"));home.onclick=()=>go("choose");
+    const r=el("div","row");r.append(again,home);box.append(r);return}
+  const cur=Q.q[Q.i],d=findDish(cur.n);
+  box.append(el("p","muted",(Q.i+1)+" / "+Q.q.length));
+  const p=el("div","plate"),f=el("i");f.style.background=conic(d.c);p.append(f);box.append(p,el("h3","",d.n));
+  const chips=el("div","chips");chips.style.justifyContent="center";d.i.split(" · ").forEach(x=>chips.append(el("span","chip",x)));box.append(chips);
+  const fb=el("div","fb");
+  if(Q.ans==null){
+    const r=el("div","row");
+    ["co","pe"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.onclick=()=>{Q.ans=c;if(c===cur.c)Q.score++;render()};r.append(b)});
+    box.append(r,fb);
+  }else{
+    const ok=Q.ans===cur.c;fb.className="fb "+(ok?"ok":"no");fb.textContent=ok?t("ok"):t("no",{c:CN[cur.c]});
+    const nx=el("button","btn",t("next"));nx.onclick=()=>{Q.i++;Q.ans=null;render()};
+    box.append(fb,el("p","muted",d.d[S.lang]||d.d.en),nx);
+  }
+}
+function go(s){S.screen=s;if(s==="quiz"&&(!S.quiz||S.quiz.i>=S.quiz.q.length))newQuiz();render();window.scrollTo(0,0)}
+
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}
+  const c=e.target.closest("[data-country]");if(c){S.country=c.dataset.country;S.tab="dishes";go("country");return}
+  const tb=e.target.closest("[data-tab]");if(tb){S.tab=tb.dataset.tab;render()}
+});
+$("back").onclick=()=>go(BACK[S.screen]||"home");
+$("langbtn").onclick=()=>{const i=LANGS.findIndex(l=>l[0]===S.lang);S.lang=LANGS[(i+1)%LANGS.length][0];save();render()};
+$("regform").addEventListener("submit",e=>{e.preventDefault();const n=$("name").value.trim();
+  if(!n){$("regerr").textContent=t("needName");$("name").focus();return}
+  $("regerr").textContent="";S.name=n;S.from=$("from").value.trim();save();go("lang")});
+
+function start(d){load();if(d&&d.screen)Object.assign(S,d);$("name").value=S.name||"";$("from").value=S.from||"";render()}
+window.claude?.hot?.snapshot?.(()=>S);
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+</script>
+</body>
+</html>
