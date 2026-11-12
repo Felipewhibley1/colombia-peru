@@ -13,19 +13,19 @@
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
   --r:18px;
-  --veil:rgba(245,245,247,.80); --veil-home:rgba(245,245,247,.62);
+  --veil:rgba(245,245,247,.55); --veil-home:rgba(245,245,247,.35); --glass:rgba(255,255,255,.80);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
-    --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A; --veil:rgba(0,0,0,.76); --veil-home:rgba(0,0,0,.6);
+    --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A; --veil:rgba(0,0,0,.6); --veil-home:rgba(0,0,0,.45); --glass:rgba(28,28,30,.80);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#000000; --surface:#1C1C1E; --ink:#F5F5F7; --muted:#98989D; --line:#38383A;
-  --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A; --veil:rgba(0,0,0,.76); --veil-home:rgba(0,0,0,.6);
+  --accent:#2997FF; --on-accent:#FFFFFF; --good:#30D158; --bad:#FF453A; --veil:rgba(0,0,0,.6); --veil-home:rgba(0,0,0,.45); --glass:rgba(28,28,30,.80);
   color-scheme: dark;
 }
 *{box-sizing:border-box}
@@ -188,6 +188,14 @@ body.home .lead{color:var(--ink)}
 .galct{position:absolute;right:12px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
 .galnav{position:absolute;top:50%;transform:translateY(-50%);font-size:20px;line-height:1;opacity:.92}
 .galnav.prev{left:10px}.galnav.next{right:10px}
+.app{padding-left:12px;padding-right:12px}
+.screen.active,.bar,footer{background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);box-shadow:0 8px 30px rgba(0,0,0,.10)}
+.screen.active{border-radius:24px;padding:20px}
+.bar{border-radius:20px;padding:8px 10px}
+footer{border-radius:16px;padding:10px 12px;margin-top:0}
+.steps i{background:var(--glass)}
+.want:disabled{opacity:.35}
+.btn:disabled{opacity:.35}
 </style>
 </head>
 <body>
@@ -300,12 +308,13 @@ tally:{en:"Dishes on your tasting list: {n}",es:"Platos en tu lista para probar:
 capital:{en:"Capital",es:"Capital",zh:"首都",ja:"首都",vi:"Thủ đô",ko:"수도"},
 currency:{en:"Currency",es:"Moneda",zh:"货币",ja:"通貨",vi:"Tiền tệ",ko:"화폐"},
 quiz:{en:"Take the final test and win a prize",es:"Haz el test final y gana un premio",zh:"参加最终测验，赢取奖品",ja:"最終テストに挑戦して賞品をゲット",vi:"Làm bài kiểm tra cuối và nhận quà",ko:"최종 테스트 풀고 상품 받기"},
-rules:{en:"Get {n} of {t} right and win a prize.",es:"Acierta {n} de {t} y gana un premio.",zh:"答对 {t} 题中的 {n} 题即可赢取奖品。",ja:"{t}問中{n}問正解で賞品がもらえます。",vi:"Trả lời đúng {n} trên {t} câu để nhận quà.",ko:"{t}문제 중 {n}문제를 맞히면 상품을 드립니다."},
+rules:{en:"Answer all {t} questions correctly to win a prize.",es:"Responde bien las {t} preguntas para ganar un premio.",zh:"全部答对 {t} 题即可赢取奖品。",ja:"{t}問すべて正解で賞品がもらえます。",vi:"Trả lời đúng cả {t} câu để nhận quà.",ko:"{t}문제를 모두 맞히면 상품을 드립니다."},
+retry:{en:"Not quite. Try again.",es:"Vuelve a intentarlo.",zh:"不对哦，再试一次。",ja:"おしい！もう一度挑戦しよう。",vi:"Chưa đúng. Hãy thử lại.",ko:"아쉬워요. 다시 해 보세요."},
 win:{en:"You won!",es:"¡Ganaste!",zh:"你赢了！",ja:"おめでとうございます！",vi:"Bạn đã thắng!",ko:"축하합니다!"},
 claim:{en:"Claim your prize",es:"Reclama tu premio",zh:"领取你的奖品",ja:"賞品を受け取ろう",vi:"Nhận phần thưởng của bạn",ko:"상품을 받으세요"},
 claimHint:{en:"Show this screen at the Colombia & Peru table.",es:"Muestra esta pantalla en la mesa de Colombia y Perú.",zh:"请在哥伦比亚和秘鲁展台出示此页面。",ja:"コロンビアとペルーのブースでこの画面を見せてください。",vi:"Hãy đưa màn hình này tại bàn Colombia & Peru.",ko:"콜롬비아·페루 부스에서 이 화면을 보여 주세요."},
 lose:{en:"Almost! You need {n} correct answers to win. Try again.",es:"¡Casi! Necesitas {n} respuestas correctas para ganar. Inténtalo de nuevo.",zh:"差一点！需要答对 {n} 题才能获奖，再试一次吧。",ja:"おしい！賞品には{n}問正解が必要です。もう一度挑戦しよう。",vi:"Suýt nữa! Bạn cần {n} câu đúng để thắng. Hãy thử lại.",ko:"아쉬워요! {n}문제를 맞혀야 합니다. 다시 도전해 보세요."},
-quizQ:{en:"Where is this dish from?",es:"¿De dónde es este plato?",zh:"这道菜来自哪里？",ja:"この料理はどこの国？",vi:"Món này đến từ đâu?",ko:"이 음식은 어느 나라 음식일까요?"},
+quizQ:{en:"Which country is it from?",es:"¿De qué país es?",zh:"这是哪个国家的？",ja:"どこの国でしょう？",vi:"Đây là của nước nào?",ko:"어느 나라일까요?"},
 ok:{en:"Correct!",es:"¡Correcto!",zh:"答对了！",ja:"正解！",vi:"Chính xác!",ko:"정답!"},
 no:{en:"Not quite. It is from {c}.",es:"Casi. Es de {c}.",zh:"不对哦，它来自{c}。",ja:"おしい！正解は{c}です。",vi:"Chưa đúng. Món này của {c}.",ko:"아쉬워요. {c} 음식입니다."},
 next:{en:"Next",es:"Siguiente",zh:"下一题",ja:"次へ",vi:"Tiếp",ko:"다음"},
@@ -702,43 +711,39 @@ function confetti(){
   (function f(now){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.x+=p.s;p.r+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);x.restore()});
     if(now-t0<3200)requestAnimationFrame(f);else c.hidden=true})(t0);
 }
-const WIN=4;
+const QN=10;
 function newQuiz(){
-  const all=[];for(const c of["co","pe"])DATA[c].dishes.forEach(d=>all.push({c,d}));
-  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}
-  S.quiz={q:all.slice(0,6).map(x=>({c:x.c,n:x.d.n})),i:0,score:0,ans:null};
+  const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const d=[],p=[];
+  for(const c of["co","pe"]){DATA[c].dishes.forEach(x=>d.push({c,n:x.n}));DATA[c].things.forEach(x=>{if(x.n!=="Aves"&&x.n!=="Amazonía")p.push({c,n:x.n})})}
+  S.quiz={q:sh(sh(d).slice(0,5).concat(sh(p).slice(0,5))),i:0,ans:null,wrong:null};
 }
-function findDish(n){for(const c of["co","pe"]){const d=DATA[c].dishes.find(x=>x.n===n);if(d)return d}}
 function renderQuiz(){
-  if(!S.quiz)newQuiz();
+  if(!S.quiz||!S.quiz.q||S.quiz.q.length!==QN)newQuiz();
   const Q=S.quiz,box=$("quizcard");box.textContent="";
-  $("rules").textContent=t("rules",{n:WIN,t:Q.q.length});
-  if(Q.i>=Q.q.length){
-    const won=Q.score>=WIN;
-    if(won){
-      if(!Q.done){Q.done=1;Q.at=new Date().toLocaleString(S.lang,{dateStyle:"medium",timeStyle:"short"});confetti()}
-      const pz=el("div","prize"),inn=el("div","in");pz.setAttribute("role","status");
-      inn.append(el("small","",t("win")+(S.name?" "+S.name:"")),el("strong","",t("claim")),el("span","",t("claimHint")),el("em","",t("score",{s:Q.score,t:Q.q.length})+" · "+Q.at));
-      pz.append(el("div","stripe"),inn);box.append(pz);
-    }else{
-      box.append(el("h3","",t("score",{s:Q.score,t:Q.q.length})),el("p","muted",t("lose",{n:WIN})));
-    }
+  $("rules").textContent=t("rules",{t:QN});
+  if(Q.i>=QN){
+    if(!Q.done){Q.done=1;Q.at=new Date().toLocaleString(S.lang,{dateStyle:"medium",timeStyle:"short"});confetti()}
+    const pz=el("div","prize"),inn=el("div","in");pz.setAttribute("role","status");
+    inn.append(el("small","",t("win")+(S.name?" "+S.name:"")),el("strong","",t("claim")),el("span","",t("claimHint")),el("em","",QN+" / "+QN+" · "+Q.at));
+    pz.append(el("div","stripe"),inn);box.append(pz);
     const again=el("button","btn",t("again"));again.onclick=()=>{newQuiz();render()};
     const home=el("button","btn ghost",t("choose"));home.onclick=()=>go("choose");
     const r=el("div","row");r.append(again,home);box.append(r);return}
-  const cur=Q.q[Q.i],d=findDish(cur.n);
-  box.append(el("p","muted",(Q.i+1)+" / "+Q.q.length));
+  const cur=Q.q[Q.i],d=findItem(cur.n);
+  box.append(el("p","muted",(Q.i+1)+" / "+QN));
   const p=el("div","qph");p.style.background=bands(d.c);p.append(pimg(d.n,"l"));box.append(p,el("h3","",d.n));
-  const chips=el("div","chips");chips.style.justifyContent="center";d.i.split(" · ").forEach(x=>chips.append(el("span","chip",x)));box.append(chips);
-  const fb=el("div","fb");
-  if(Q.ans==null){
-    const r=el("div","row");
-    ["co","pe"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.onclick=()=>{Q.ans=c;if(c===cur.c)Q.score++;render()};r.append(b)});
-    box.append(r,fb);
-  }else{
-    const ok=Q.ans===cur.c;fb.className="fb "+(ok?"ok":"no");fb.textContent=ok?t("ok"):t("no",{c:CN[cur.c]});
-    const nx=el("button","btn",t("next"));nx.onclick=()=>{Q.i++;Q.ans=null;render()};
+  if(d.i){const chips=el("div","chips");chips.style.justifyContent="center";d.i.split(" · ").forEach(x=>chips.append(el("span","chip",x)));box.append(chips)}
+  const fb=el("div","fb");fb.setAttribute("role","status");
+  if(Q.ans==="ok"){
+    fb.className="fb ok";fb.textContent=t("ok");
+    const nx=el("button","btn",t("next"));nx.onclick=()=>{Q.i++;Q.ans=null;Q.wrong=null;render();window.scrollTo(0,0)};
     box.append(fb,el("p","muted",d.d[S.lang]||d.d.en),nx);
+  }else{
+    const r=el("div","row");
+    ["co","pe"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.disabled=Q.wrong===c;b.onclick=()=>{if(c===cur.c){Q.ans="ok"}else{Q.ans="retry";Q.wrong=c}render()};r.append(b)});
+    if(Q.ans==="retry"){fb.className="fb no";fb.textContent=t("retry")}
+    box.append(r,fb);
   }
 }
 function go(s){stopSpeak();S.rec=false;if(s==="credits"&&S.screen!=="credits")S.prev=S.screen;S.open=null;S.screen=s;if(s==="quiz"&&(!S.quiz||S.quiz.i>=S.quiz.q.length))newQuiz();render();window.scrollTo(0,0)}
