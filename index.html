@@ -180,6 +180,14 @@ body.home .lead{color:var(--ink)}
 .recipe small{color:var(--muted);font-size:13px}
 .listenwrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .listenwrap small{font-size:13px;color:var(--muted)}
+.brand img{display:block;height:36px;width:auto;background:#fff;border-radius:8px;padding:3px 7px;margin-bottom:3px}
+.gal{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.gal::-webkit-scrollbar{display:none}
+.gal figure{flex:0 0 100%;margin:0;position:relative;scroll-snap-align:center}
+.gal figcaption{position:absolute;left:10px;bottom:10px;max-width:68%;font-size:11px;color:#fff;background:rgba(0,0,0,.5);padding:3px 9px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.galct{position:absolute;right:12px;bottom:10px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.galnav{position:absolute;top:50%;transform:translateY(-50%);font-size:20px;line-height:1;opacity:.92}
+.galnav.prev{left:10px}.galnav.next{right:10px}
 </style>
 </head>
 <body>
@@ -187,7 +195,7 @@ body.home .lead{color:var(--ink)}
 <div class="app">
   <div class="bar">
     <button class="iconbtn" id="back" hidden aria-label="Back">‹</button>
-    <div class="brand"><b>Mission College</b><span id="evt">International Week</span></div>
+    <div class="brand"><img id="mclogo" alt="Mission College" src="https://missioncollege.edu/_resources/theme/images/logo.png" onerror="this.remove();document.getElementById('mctxt').hidden=false"><b id="mctxt" hidden>Mission College</b><span id="evt">International Week</span></div>
     <button class="iconbtn" id="langbtn" aria-label="Language">EN</button>
   </div>
   <div class="steps" id="steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
@@ -311,6 +319,7 @@ noSound:{en:"No sound? Turn up the volume and switch off silent mode.",es:"¿No 
 stop:{en:"Stop",es:"Detener",zh:"停止",ja:"停止",vi:"Dừng",ko:"정지"},
 recipe:{en:"See the recipe",es:"Ver la receta",zh:"查看做法",ja:"レシピを見る",vi:"Xem công thức",ko:"레시피 보기"},
 recipeT:{en:"Recipe",es:"Receta",zh:"做法",ja:"レシピ",vi:"Công thức",ko:"레시피"},
+swipe:{en:"Swipe for more photos",es:"Desliza para ver más fotos",zh:"左右滑动查看更多照片",ja:"スワイプで他の写真を見る",vi:"Vuốt để xem thêm ảnh",ko:"밀어서 사진 더 보기"},
 again:{en:"Play again",es:"Jugar otra vez",zh:"再玩一次",ja:"もう一度",vi:"Chơi lại",ko:"다시 하기"}
 };
 const CN={co:"Colombia",pe:"Perú"};
@@ -379,7 +388,9 @@ const PH={
 "Mission College":["2008-1115-003-MissionCollege.jpg","Bobak Ha'Eri","CC BY 3.0"]
 };
 const SZ={s:250,m:500,l:960}, SZP={s:500,m:1280,l:1280};
-const purl=(n,z)=>"https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(PH[n][0])+"?width="+(PH[n][3]?SZP:SZ)[z||"m"];
+const furl=(p,z)=>"https://commons.wikimedia.org/wiki/Special:FilePath/"+encodeURIComponent(p[0])+"?width="+(p[3]?SZP:SZ)[z||"m"];
+const purl=(n,z)=>furl(PH[n],z);
+function fimg(p,z,alt){const i=new Image();i.alt=alt||"";i.decoding="async";i.onerror=()=>i.remove();i.src=furl(p,z);return i}
 function pimg(n,z){const i=new Image();i.alt=n;i.loading="lazy";i.decoding="async";i.onerror=()=>i.remove();i.src=purl(n,z);return i}
 function findItem(n){for(const c of["co","pe"])for(const k of["dishes","things"]){const d=DATA[c][k].find(x=>x.n===n);if(d)return d}}
 const R={
@@ -469,10 +480,116 @@ vi:["Luộc 250 g bí đỏ và 250 g khoai lang cho mềm rồi nghiền nhuy�
 ko:["호박 250g과 고구마 250g을 부드럽게 삶아 으깹니다.","으깬 것에 밀가루 2컵, 드라이이스트 1큰술, 설탕 2큰술, 아니스 약간을 섞어 1시간 발효시킵니다.","손가락에 물을 묻혀 반죽을 고리 모양으로 만들어 뜨거운 기름에 노릇하게 튀깁니다.","시럽: 찬카카(또는 흑설탕) 250g을 물 1컵, 계피, 정향, 오렌지 껍질과 함께 걸쭉해질 때까지 졸여 위에 뿌립니다."]}}
 };
 
+DATA.co.dishes.push(
+{n:"Tamal",c:["#5E7D3A","#F2D16B","#E8A23B","#F7EFD2"],i:"masa de maíz · pollo · cerdo · huevo · hoja de plátano",d:{en:"Corn dough filled with chicken, pork, egg and vegetables, wrapped in plantain leaves and steamed for hours. A classic weekend breakfast with hot chocolate.",es:"Masa de maíz rellena de pollo, cerdo, huevo y verduras, envuelta en hojas de plátano y cocida al vapor por horas. Un desayuno clásico de fin de semana con chocolate caliente.",zh:"玉米面团包入鸡肉、猪肉、鸡蛋和蔬菜，用芭蕉叶裹好蒸几个小时。是周末早餐的经典，常配热巧克力。",ja:"とうもろこしの生地に鶏肉、豚肉、卵、野菜を包み、バナナの葉でくるんで何時間も蒸します。週末の朝食の定番で、ホットチョコレートと一緒に。",vi:"Bột ngô nhân gà, thịt heo, trứng và rau củ, gói trong lá chuối rồi hấp nhiều giờ. Bữa sáng cuối tuần kinh điển, ăn cùng sô cô la nóng.",ko:"옥수수 반죽에 닭고기, 돼지고기, 달걀, 채소를 넣고 바나나 잎으로 싸서 몇 시간 동안 찝니다. 핫초콜릿과 함께 먹는 주말 아침의 대표 메뉴입니다."}},
+{n:"Patacones",c:["#E9B93B","#D99A2B","#F4D777"],i:"plátano verde · sal · hogao",d:{en:"Green plantain fried, smashed flat and fried again until crisp. Eaten with salt, tomato and onion sauce or cheese, next to almost any dish.",es:"Plátano verde frito, aplastado y vuelto a freír hasta quedar crocante. Se comen con sal, hogao o queso, al lado de casi cualquier plato.",zh:"青大蕉先炸、压扁、再炸至酥脆。撒盐，配番茄洋葱酱或奶酪，几乎可以搭配任何菜。",ja:"青いプランテンを揚げ、つぶして、もう一度カリッと揚げます。塩、トマトと玉ねぎのソース、チーズなどと一緒に、ほとんどどんな料理にも添えます。",vi:"Chuối xanh chiên, ép dẹt rồi chiên lại cho giòn. Ăn với muối, sốt cà chua hành hoặc phô mai, kèm hầu như mọi món.",ko:"초록 플랜틴을 튀기고 납작하게 눌러 다시 바삭하게 튀깁니다. 소금, 토마토 양파 소스, 치즈와 함께 거의 모든 요리에 곁들입니다."}},
+{n:"Pandebono",c:["#E8C27A","#D9A24E","#F6E3B5"],i:"almidón de yuca · queso · huevo",d:{en:"A small cheese bread from Valle del Cauca, made with cassava starch. Soft, slightly chewy and best straight from the oven with coffee.",es:"Un pancito de queso del Valle del Cauca, hecho con almidón de yuca. Suave, un poco elástico y mejor recién salido del horno, con café.",zh:"来自考卡山谷的小奶酪面包，用木薯淀粉制作。柔软微弹，刚出炉配咖啡最好吃。",ja:"バジェ・デル・カウカ地方の小さなチーズパン。キャッサバでんぷんで作り、やわらかくて少しもちもち。焼きたてをコーヒーと一緒に。",vi:"Bánh mì phô mai nhỏ của vùng Valle del Cauca, làm từ bột sắn. Mềm, hơi dai và ngon nhất khi vừa ra lò, dùng với cà phê.",ko:"바예델카우카 지방의 작은 치즈 빵으로 카사바 전분으로 만듭니다. 부드럽고 살짝 쫄깃하며, 갓 구워 커피와 먹으면 가장 맛있습니다."}},
+{n:"Arroz con coco",c:["#A9743F","#D8B98A","#5B3A1E","#F2E6CF"],i:"arroz · leche de coco · uvas pasas · panela",d:{en:"Rice from the Caribbean coast cooked in caramelized coconut milk, a little sweet and a little salty. The classic partner for fried fish and patacones.",es:"Arroz de la costa Caribe cocinado en leche de coco caramelizada, un poco dulce y un poco salado. El compañero clásico del pescado frito y los patacones.",zh:"加勒比海岸的米饭，用熬至焦糖色的椰奶煮成，微甜微咸。是炸鱼和炸大蕉饼的经典搭配。",ja:"カリブ海沿岸のごはん。煮詰めてカラメル色にしたココナッツミルクで炊き、ほんのり甘くて少し塩味。魚のフライやパタコンの定番のお供です。",vi:"Cơm vùng biển Caribe nấu với nước cốt dừa thắng caramel, hơi ngọt và hơi mặn. Món ăn kèm kinh điển của cá chiên và patacones.",ko:"카리브 해안의 밥으로, 캐러멜색이 될 때까지 졸인 코코넛 밀크로 지어 살짝 달고 살짝 짭짤합니다. 생선튀김과 파타코네스에 곁들이는 대표 음식입니다."}}
+);
+DATA.pe.dishes.push(
+{n:"Pollo a la brasa",c:["#7A3B1D","#C9772E","#F2C230","#F4F1E8"],i:"pollo · ají panca · sillao · comino · papas fritas",d:{en:"Chicken marinated in spices and soy sauce and roasted over charcoal until the skin is dark and crisp. Peruvians eat it with fries, salad and creamy chili sauces.",es:"Pollo marinado en especias y sillao y asado al carbón hasta que la piel queda oscura y crocante. Se come con papas fritas, ensalada y cremas de ají.",zh:"鸡肉用香料和酱油腌制后炭火烤至外皮深色酥脆。秘鲁人配薯条、沙拉和奶油辣酱一起吃。",ja:"スパイスとしょうゆに漬けた鶏を炭火で皮がこんがりパリッとするまで焼きます。フライドポテト、サラダ、クリーミーな唐辛子ソースと一緒に食べます。",vi:"Gà ướp gia vị và nước tương, nướng than đến khi da sẫm màu và giòn. Người Peru ăn với khoai tây chiên, salad và các loại sốt ớt béo.",ko:"향신료와 간장에 재운 닭을 숯불에 껍질이 짙고 바삭해질 때까지 굽습니다. 감자튀김, 샐러드, 크리미한 고추 소스와 함께 먹습니다."}},
+{n:"Papa a la huancaína",c:["#F2C230","#F7E08A","#8CC152","#3B3B3B"],i:"papa · ají amarillo · queso fresco · leche · galletas",d:{en:"Cold boiled potatoes covered in a creamy, mildly spicy sauce of yellow chili and fresh cheese. A favorite starter, served on lettuce with egg and olives.",es:"Papas sancochadas frías bañadas en una crema de ají amarillo y queso fresco, suave y apenas picante. Una entrada favorita, servida sobre lechuga con huevo y aceitunas.",zh:"冷的煮土豆淋上黄辣椒和鲜奶酪做的奶油酱，微辣顺滑。是最受欢迎的前菜，铺在生菜上，配鸡蛋和橄榄。",ja:"冷ましたゆでじゃがいもに、黄色い唐辛子とフレッシュチーズのクリーミーでほんのり辛いソースをかけます。レタスにのせ、卵とオリーブを添える人気の前菜です。",vi:"Khoai tây luộc để nguội phủ sốt kem ớt vàng và phô mai tươi, béo và cay nhẹ. Món khai vị được yêu thích, bày trên xà lách với trứng và ô liu.",ko:"차게 식힌 삶은 감자에 노란 고추와 생치즈로 만든 크리미하고 살짝 매콤한 소스를 끼얹습니다. 상추 위에 달걀, 올리브와 함께 내는 인기 전채입니다."}},
+{n:"Arroz con pollo",c:["#5E8C3A","#8CC152","#E8853A","#F2C230"],i:"pollo · arroz · culantro · ají amarillo · arvejas",d:{en:"Chicken and rice cooked together in a green cilantro sauce with peas, carrot and corn. A Sunday family lunch all over Peru.",es:"Pollo y arroz cocinados juntos en un aderezo verde de culantro, con arvejas, zanahoria y choclo. Un almuerzo familiar de domingo en todo el Perú.",zh:"鸡肉和米饭一起在绿色的香菜酱中煮熟，加豌豆、胡萝卜和玉米。是秘鲁各地周日的家庭午餐。",ja:"鶏肉と米をパクチーの緑のソースで一緒に炊き、グリーンピース、にんじん、とうもろこしを加えます。ペルー中で日曜日の家族の昼ごはんです。",vi:"Gà và cơm nấu chung trong sốt ngò xanh với đậu Hà Lan, cà rốt và ngô. Bữa trưa Chủ nhật của gia đình khắp Peru.",ko:"닭고기와 쌀을 초록빛 고수 소스에 함께 익히고 완두콩, 당근, 옥수수를 넣습니다. 페루 전역에서 일요일 가족 점심으로 먹습니다."}},
+{n:"Suspiro a la limeña",c:["#C9914E","#F4E6D0","#8B4A2B"],i:"manjar blanco · yemas · merengue · oporto · canela",d:{en:"A Lima dessert in two layers: silky milk caramel below and port wine meringue on top, with a dusting of cinnamon. Its name means the sigh of a lady from Lima.",es:"Un postre limeño en dos capas: manjar blanco sedoso abajo y merengue de oporto arriba, con un toque de canela. Su nombre viene del suspiro de una limeña.",zh:"利马的双层甜点：下层是丝滑的牛奶焦糖，上层是波特酒蛋白霜，撒少许肉桂。名字的意思是“利马女子的叹息”。",ja:"リマの2層のデザート。下はなめらかなミルクキャラメル、上はポートワインのメレンゲで、シナモンをふります。名前は「リマの女性のため息」という意味です。",vi:"Món tráng miệng hai lớp của Lima: bên dưới là caramel sữa mịn, bên trên là meringue rượu port, rắc chút quế. Tên món nghĩa là tiếng thở dài của cô gái Lima.",ko:"리마의 두 겹 디저트로, 아래는 부드러운 밀크 캐러멜, 위는 포트와인 머랭이며 계피를 살짝 뿌립니다. 이름은 '리마 여인의 한숨'이라는 뜻입니다."}}
+);
+Object.assign(R,{
+"Tamal":{m:"⏱ 3 h · 👥 6",s:{
+en:["Season 500 g of chicken and 500 g of pork pieces with garlic, cumin, onion and salt. Rest 1 hour.","Mix 3 cups of precooked corn flour with 4 cups of warm broth, oil and salt into a soft dough.","On each softened plantain leaf, put dough, meat, slices of carrot and potato and half a boiled egg. Fold into a bundle and tie with string.","Steam or simmer the bundles for 2 hours. Unwrap and eat hot."],
+es:["Adoba 500 g de pollo y 500 g de cerdo en trozos con ajo, comino, cebolla y sal. Deja reposar 1 hora.","Mezcla 3 tazas de harina de maíz precocida con 4 tazas de caldo tibio, aceite y sal hasta tener una masa blanda.","Sobre cada hoja de plátano soasada pon masa, carne, rodajas de zanahoria y papa y medio huevo cocido. Cierra en forma de paquete y amarra con cabuya.","Cocina los tamales al vapor o en agua por 2 horas. Desenvuelve y come caliente."],
+zh:["将500克鸡肉块和500克猪肉块用大蒜、孜然、洋葱和盐腌制1小时。","将3杯预熟玉米粉与4杯温热高汤、油和盐拌成柔软的面团。","在每张烤软的芭蕉叶上放面团、肉、胡萝卜片、土豆片和半个水煮蛋，包成小包并用绳子扎紧。","蒸或煮2小时，打开趁热吃。"],
+ja:["鶏肉500gと豚肉500gをにんにく、クミン、玉ねぎ、塩で下味をつけ、1時間おく。","調理済みとうもろこし粉3カップに温かいスープ4カップ、油、塩を混ぜ、やわらかい生地にする。","火であぶってやわらかくしたバナナの葉に、生地、肉、にんじんとじゃがいもの薄切り、ゆで卵半分をのせ、包んでひもでしばる。","2時間蒸すかゆでる。葉を開いて熱いうちにいただく。"],
+vi:["Ướp 500 g thịt gà và 500 g thịt heo cắt miếng với tỏi, thì là Ai Cập, hành tây và muối. Để 1 tiếng.","Trộn 3 chén bột ngô chín sẵn với 4 chén nước dùng ấm, dầu và muối thành bột mềm.","Trên mỗi lá chuối đã hơ mềm, đặt bột, thịt, cà rốt và khoai tây cắt lát cùng nửa quả trứng luộc. Gói lại và buộc dây.","Hấp hoặc luộc 2 tiếng. Mở lá và ăn nóng."],
+ko:["닭고기 500g과 돼지고기 500g을 마늘, 커민, 양파, 소금으로 양념해 1시간 둡니다.","익힌 옥수수 가루 3컵에 따뜻한 육수 4컵, 식용유, 소금을 섞어 부드러운 반죽을 만듭니다.","불에 살짝 구워 부드럽게 만든 바나나 잎 위에 반죽, 고기, 당근과 감자 조각, 삶은 달걀 반 개를 올리고 싸서 끈으로 묶습니다.","2시간 찌거나 삶습니다. 잎을 열고 뜨거울 때 먹습니다."]}},
+"Patacones":{m:"⏱ 20 min · 👥 4",s:{
+en:["Peel 2 green plantains and cut them into 3 cm chunks.","Fry the chunks in oil over medium heat for 3 minutes per side, until pale gold.","Take them out and smash each one flat with the bottom of a glass or between two boards.","Fry again in hotter oil for 1 to 2 minutes per side until crisp. Sprinkle with salt."],
+es:["Pela 2 plátanos verdes y córtalos en trozos de 3 cm.","Fríe los trozos en aceite a fuego medio 3 minutos por lado, hasta que estén apenas dorados.","Sácalos y aplasta cada uno con el fondo de un vaso o entre dos tablas.","Fríelos otra vez en aceite más caliente de 1 a 2 minutos por lado, hasta que queden crocantes. Espolvorea sal."],
+zh:["将2根青大蕉去皮，切成3厘米的段。","在中火的油中每面炸3分钟，至浅金色。","捞出，用杯底或两块木板把每块压扁。","在更热的油中再炸，每面1到2分钟至酥脆，撒盐。"],
+ja:["青いプランテン2本の皮をむき、3cm幅に切る。","中火の油で片面3分ずつ、うすく色づくまで揚げる。","取り出して、コップの底か2枚の板で平らにつぶす。","高めの温度の油で片面1〜2分ずつ、カリッとするまでもう一度揚げ、塩をふる。"],
+vi:["Lột vỏ 2 quả chuối xanh và cắt khúc 3 cm.","Chiên trong dầu ở lửa vừa 3 phút mỗi mặt đến khi vàng nhạt.","Vớt ra và ép dẹt từng miếng bằng đáy ly hoặc giữa hai tấm thớt.","Chiên lại trong dầu nóng hơn 1 đến 2 phút mỗi mặt cho giòn. Rắc muối."],
+ko:["초록 플랜틴 2개의 껍질을 벗기고 3cm 길이로 썹니다.","중불 기름에서 한 면당 3분씩 연한 금빛이 될 때까지 튀깁니다.","건져서 컵 바닥이나 도마 두 개 사이에 넣어 납작하게 누릅니다.","더 뜨거운 기름에서 한 면당 1~2분씩 바삭하게 다시 튀기고 소금을 뿌립니다."]}},
+"Pandebono":{m:"⏱ 35 min · 👥 12",s:{
+en:["Heat the oven to 200 °C.","Mix 2 cups of cassava starch, ¼ cup of precooked corn flour, 2 cups of grated salty white cheese (or feta) and 1 teaspoon of baking powder.","Add 1 egg and 2 to 4 tablespoons of milk. Knead into a smooth dough that does not stick.","Shape into balls or rings, place on a tray and bake 15 to 20 minutes, until golden."],
+es:["Calienta el horno a 200 °C.","Mezcla 2 tazas de almidón de yuca, ¼ de taza de harina de maíz precocida, 2 tazas de queso costeño rallado y 1 cucharadita de polvo de hornear.","Agrega 1 huevo y de 2 a 4 cucharadas de leche. Amasa hasta tener una masa suave que no se pegue.","Forma bolitas o roscas, ponlas en una bandeja y hornea de 15 a 20 minutos, hasta que doren."],
+zh:["烤箱预热至200°C。","将2杯木薯淀粉、¼杯预熟玉米粉、2杯磨碎的咸白奶酪（或菲达奶酪）和1茶匙泡打粉拌匀。","加入1个鸡蛋和2到4汤匙牛奶，揉成光滑不粘手的面团。","搓成球或圈，放在烤盘上烤15到20分钟，至金黄。"],
+ja:["オーブンを200℃に温める。","キャッサバでんぷん2カップ、調理済みとうもろこし粉¼カップ、おろした塩気のある白チーズ（またはフェタ）2カップ、ベーキングパウダー小さじ1を混ぜる。","卵1個と牛乳大さじ2〜4を加え、手につかないなめらかな生地になるまでこねる。","丸か輪の形にして天板に並べ、15〜20分、きつね色になるまで焼く。"],
+vi:["Làm nóng lò ở 200 °C.","Trộn 2 chén bột sắn, ¼ chén bột ngô chín sẵn, 2 chén phô mai trắng mặn bào (hoặc feta) và 1 muỗng cà phê bột nở.","Thêm 1 quả trứng và 2 đến 4 muỗng canh sữa. Nhồi thành khối bột mịn, không dính tay.","Nặn thành viên hoặc vòng, xếp lên khay và nướng 15 đến 20 phút đến khi vàng."],
+ko:["오븐을 200°C로 예열합니다.","카사바 전분 2컵, 익힌 옥수수 가루 ¼컵, 간 짭짤한 흰 치즈(또는 페타) 2컵, 베이킹파우더 1작은술을 섞습니다.","달걀 1개와 우유 2~4큰술을 넣고 손에 붙지 않는 매끈한 반죽이 되도록 치댑니다.","동그랗게 또는 고리 모양으로 빚어 팬에 올리고 15~20분 노릇하게 굽습니다."]}},
+"Arroz con coco":{m:"⏱ 45 min · 👥 6",s:{
+en:["Simmer 1 can (400 ml) of coconut milk in a pot, stirring, until the oil separates and brown bits form, about 15 minutes.","Add 2 tablespoons of brown sugar and ½ cup of raisins and stir for 1 minute.","Add 2 cups of white rice, 3½ cups of water and 1½ teaspoons of salt. Boil until the water is almost gone.","Cover and cook on the lowest heat for 20 minutes. Fluff with a fork."],
+es:["Hierve 1 lata (400 ml) de leche de coco en una olla, revolviendo, hasta que suelte el aceite y se forme el titoté dorado, unos 15 minutos.","Agrega 2 cucharadas de panela o azúcar morena y ½ taza de uvas pasas y revuelve 1 minuto.","Añade 2 tazas de arroz blanco, 3½ tazas de agua y 1½ cucharaditas de sal. Hierve hasta que el agua casi se seque.","Tapa y cocina a fuego muy bajo 20 minutos. Suelta el arroz con un tenedor."],
+zh:["将1罐（400毫升）椰奶放入锅中边搅拌边熬，直到出油并出现褐色小颗粒，约15分钟。","加入2汤匙红糖和½杯葡萄干，搅拌1分钟。","加入2杯白米、3½杯水和1½茶匙盐，煮到水快收干。","盖上锅盖，用最小火焖20分钟，用叉子拨松。"],
+ja:["ココナッツミルク1缶（400ml）を鍋で混ぜながら、油が分離して茶色い粒ができるまで約15分煮詰める。","黒糖大さじ2とレーズン½カップを加え、1分混ぜる。","白米2カップ、水3½カップ、塩小さじ1½を加え、水気がほぼなくなるまで煮る。","ふたをしてごく弱火で20分炊き、フォークでほぐす。"],
+vi:["Đun 1 lon (400 ml) nước cốt dừa trong nồi, khuấy đều đến khi tách dầu và xuất hiện cặn nâu, khoảng 15 phút.","Thêm 2 muỗng canh đường nâu và ½ chén nho khô, khuấy 1 phút.","Cho 2 chén gạo trắng, 3½ chén nước và 1½ muỗng cà phê muối. Đun đến khi nước gần cạn.","Đậy nắp, nấu lửa nhỏ nhất 20 phút. Xới tơi bằng nĩa."],
+ko:["코코넛 밀크 1캔(400ml)을 냄비에 넣고 저으면서 기름이 분리되고 갈색 알갱이가 생길 때까지 약 15분 졸입니다.","흑설탕 2큰술과 건포도 ½컵을 넣고 1분 젓습니다.","흰쌀 2컵, 물 3½컵, 소금 1½작은술을 넣고 물이 거의 없어질 때까지 끓입니다.","뚜껑을 덮고 가장 약한 불에서 20분 익힌 뒤 포크로 풀어 줍니다."]}},
+"Pollo a la brasa":{m:"⏱ 1 h 30 min + 6 h · 👥 4",s:{
+en:["Mix 3 tablespoons of soy sauce, 2 of ají panca paste, 4 crushed garlic cloves, 1 tablespoon of cumin, 1 of vinegar, the juice of 1 lime, salt and pepper.","Rub a whole chicken with the mix, also under the skin. Marinate in the fridge at least 6 hours.","Roast at 200 °C for about 1 hour 15 minutes, turning once, until the juices run clear.","Rest 10 minutes, cut in quarters and serve with french fries and salad."],
+es:["Mezcla 3 cucharadas de sillao, 2 de pasta de ají panca, 4 dientes de ajo molidos, 1 cucharada de comino, 1 de vinagre, el jugo de 1 limón, sal y pimienta.","Unta un pollo entero con la mezcla, también debajo de la piel. Marina en la refrigeradora al menos 6 horas.","Hornea a 200 °C alrededor de 1 hora y 15 minutos, volteándolo una vez, hasta que los jugos salgan claros.","Deja reposar 10 minutos, corta en cuartos y sirve con papas fritas y ensalada."],
+zh:["将3汤匙酱油、2汤匙ají panca辣椒酱、4瓣蒜泥、1汤匙孜然、1汤匙醋、1个青柠的汁、盐和胡椒拌匀。","把腌料抹遍整只鸡，包括皮下，冷藏腌制至少6小时。","在200°C下烤约1小时15分钟，中途翻面一次，直到流出的汁液清澈。","静置10分钟，切成四块，配薯条和沙拉。"],
+ja:["しょうゆ大さじ3、アヒ・パンカのペースト大さじ2、つぶしたにんにく4片、クミン大さじ1、酢大さじ1、ライム1個分の果汁、塩、こしょうを混ぜる。","丸鶏1羽の全体と皮の下にもすり込み、冷蔵庫で6時間以上漬ける。","200℃で約1時間15分、途中で一度返しながら、肉汁が透明になるまで焼く。","10分休ませて4つに切り、フライドポテトとサラダを添える。"],
+vi:["Trộn 3 muỗng canh nước tương, 2 muỗng canh sốt ớt ají panca, 4 tép tỏi giã, 1 muỗng canh thì là Ai Cập, 1 muỗng canh giấm, nước cốt 1 quả chanh, muối và tiêu.","Xoa hỗn hợp khắp một con gà nguyên con, cả dưới da. Ướp trong tủ lạnh ít nhất 6 tiếng.","Nướng ở 200 °C khoảng 1 tiếng 15 phút, trở một lần, đến khi nước thịt chảy ra trong.","Để nghỉ 10 phút, chặt làm tư và ăn với khoai tây chiên và salad."],
+ko:["간장 3큰술, 아히 판카 페이스트 2큰술, 다진 마늘 4쪽, 커민 1큰술, 식초 1큰술, 라임 1개의 즙, 소금, 후추를 섞습니다.","통닭 한 마리에 껍질 아래까지 골고루 바르고 냉장고에서 6시간 이상 재웁니다.","200°C에서 약 1시간 15분, 중간에 한 번 뒤집어 가며 육즙이 맑게 나올 때까지 굽습니다.","10분 두었다가 4등분해 감자튀김, 샐러드와 함께 냅니다."]}},
+"Papa a la huancaína":{m:"⏱ 30 min · 👥 4",s:{
+en:["Boil 6 yellow or white potatoes until tender. Cool, peel and cut into thick slices.","Blend 3 tablespoons of ají amarillo paste, 250 g of fresh white cheese, ¾ cup of evaporated milk, 4 soda crackers, 2 tablespoons of oil and salt until smooth.","Lay the potato slices on lettuce leaves and pour the sauce over them.","Top with halves of boiled egg and black olives. Serve cold."],
+es:["Sancocha 6 papas amarillas o blancas hasta que estén blandas. Deja enfriar, pela y corta en rodajas gruesas.","Licúa 3 cucharadas de pasta de ají amarillo, 250 g de queso fresco, ¾ de taza de leche evaporada, 4 galletas de soda, 2 cucharadas de aceite y sal hasta que quede una crema.","Acomoda las rodajas de papa sobre hojas de lechuga y báñalas con la crema.","Decora con mitades de huevo duro y aceitunas negras. Sirve frío."],
+zh:["将6个黄土豆或白土豆煮软，放凉后去皮切厚片。","将3汤匙黄辣椒酱、250克新鲜白奶酪、¾杯淡奶、4片苏打饼干、2汤匙油和盐打成顺滑的酱。","把土豆片摆在生菜叶上，淋上酱汁。","用切半的水煮蛋和黑橄榄装饰，冷食。"],
+ja:["黄色または白いじゃがいも6個をやわらかくゆで、冷まして皮をむき、厚切りにする。","アヒ・アマリージョのペースト大さじ3、フレッシュチーズ250g、エバミルク¾カップ、ソーダクラッカー4枚、油大さじ2、塩をミキサーでなめらかにする。","レタスの上にじゃがいもを並べ、ソースをかける。","半分に切ったゆで卵と黒オリーブを飾り、冷やしていただく。"],
+vi:["Luộc 6 củ khoai tây vàng hoặc trắng cho mềm. Để nguội, lột vỏ và cắt lát dày.","Xay 3 muỗng canh sốt ớt vàng, 250 g phô mai tươi, ¾ chén sữa đặc không đường, 4 bánh quy mặn, 2 muỗng canh dầu và muối cho mịn.","Xếp khoai tây lên lá xà lách và rưới sốt lên.","Trang trí với trứng luộc cắt đôi và ô liu đen. Ăn lạnh."],
+ko:["노란 감자나 흰 감자 6개를 부드럽게 삶습니다. 식혀서 껍질을 벗기고 두툼하게 썹니다.","아히 아마리요 페이스트 3큰술, 생치즈 250g, 무가당 연유 ¾컵, 소다 크래커 4개, 식용유 2큰술, 소금을 곱게 갑니다.","상추 잎 위에 감자를 올리고 소스를 끼얹습니다.","반으로 자른 삶은 달걀과 블랙 올리브를 올려 차게 냅니다."]}},
+"Arroz con pollo":{m:"⏱ 1 h · 👥 4",s:{
+en:["Blend 2 cups of cilantro leaves with ½ cup of water until smooth.","Season 4 chicken pieces with salt, pepper and cumin and brown them in a pot. Set aside. In the same pot, sauté 1 onion, 3 garlic cloves and 1 tablespoon of ají amarillo paste.","Add the cilantro blend and cook 5 minutes. Return the chicken and add 2 cups of rice, 2½ cups of broth, ½ cup of peas, 1 diced carrot and ½ cup of corn.","Cover and cook on low heat 20 minutes, until the rice is done. Serve with onion salad."],
+es:["Licúa 2 tazas de hojas de culantro con ½ taza de agua hasta que quede suave.","Sazona 4 presas de pollo con sal, pimienta y comino y dóralas en una olla. Resérvalas. En la misma olla sofríe 1 cebolla, 3 dientes de ajo y 1 cucharada de pasta de ají amarillo.","Agrega el culantro licuado y cocina 5 minutos. Regresa el pollo y añade 2 tazas de arroz, 2½ tazas de caldo, ½ taza de arvejas, 1 zanahoria en cubos y ½ taza de choclo.","Tapa y cocina a fuego bajo 20 minutos, hasta que el arroz esté listo. Sirve con salsa criolla."],
+zh:["将2杯香菜叶与½杯水打成顺滑的酱。","将4块鸡肉用盐、胡椒和孜然调味，在锅中煎至金黄后取出。在同一锅中炒香1个洋葱、3瓣大蒜和1汤匙黄辣椒酱。","加入香菜酱煮5分钟。放回鸡肉，加入2杯米、2½杯高汤、½杯豌豆、1根切丁的胡萝卜和½杯玉米粒。","盖上锅盖小火煮20分钟至米饭熟透，配洋葱沙拉。"],
+ja:["パクチーの葉2カップと水½カップをミキサーでなめらかにする。","鶏肉4切れに塩、こしょう、クミンをふり、鍋で焼き色をつけて取り出す。同じ鍋で玉ねぎ1個、にんにく3片、アヒ・アマリージョのペースト大さじ1を炒める。","パクチーのピューレを加えて5分煮る。鶏肉を戻し、米2カップ、スープ2½カップ、グリーンピース½カップ、角切りのにんじん1本、とうもろこし½カップを加える。","ふたをして弱火で20分、米が炊けるまで煮る。玉ねぎのサラダを添える。"],
+vi:["Xay 2 chén lá ngò với ½ chén nước cho mịn.","Ướp 4 miếng gà với muối, tiêu và thì là Ai Cập rồi áp chảo cho vàng trong nồi. Lấy ra. Trong cùng nồi, phi 1 củ hành tây, 3 tép tỏi và 1 muỗng canh sốt ớt vàng.","Cho ngò xay vào nấu 5 phút. Cho gà trở lại, thêm 2 chén gạo, 2½ chén nước dùng, ½ chén đậu Hà Lan, 1 củ cà rốt thái hạt lựu và ½ chén ngô.","Đậy nắp, nấu lửa nhỏ 20 phút đến khi cơm chín. Ăn kèm salad hành tây."],
+ko:["고수 잎 2컵과 물 ½컵을 곱게 갑니다.","닭고기 4조각에 소금, 후추, 커민으로 간해 냄비에서 노릇하게 구워 꺼내 둡니다. 같은 냄비에 양파 1개, 마늘 3쪽, 아히 아마리요 페이스트 1큰술을 볶습니다.","간 고수를 넣고 5분 끓입니다. 닭고기를 다시 넣고 쌀 2컵, 육수 2½컵, 완두콩 ½컵, 깍둑썬 당근 1개, 옥수수 ½컵을 넣습니다.","뚜껑을 덮고 약불에서 밥이 익을 때까지 20분 익힙니다. 양파 샐러드를 곁들입니다."]}},
+"Suspiro a la limeña":{m:"⏱ 50 min + 2 h · 👥 6",s:{
+en:["Simmer 1 can of evaporated milk and 1 can of condensed milk over low heat, stirring all the time, until thick enough to see the bottom of the pot, about 30 minutes.","Off the heat, stir in 4 beaten egg yolks and 1 teaspoon of vanilla. Pour into 6 glasses and let cool.","Boil ¾ cup of sugar with ½ cup of port wine to a thick syrup. Beat 3 egg whites to stiff peaks and pour in the hot syrup in a thin stream, beating until glossy.","Spoon the meringue over the caramel, sprinkle with cinnamon and chill for 2 hours."],
+es:["Cocina 1 lata de leche evaporada y 1 lata de leche condensada a fuego bajo, moviendo siempre, hasta que espese y se vea el fondo de la olla, unos 30 minutos.","Fuera del fuego, incorpora 4 yemas batidas y 1 cucharadita de vainilla. Reparte en 6 copas y deja enfriar.","Hierve ¾ de taza de azúcar con ½ taza de oporto hasta tener un almíbar espeso. Bate 3 claras a punto de nieve y agrega el almíbar caliente en hilo, batiendo hasta que brille.","Cubre el manjar con el merengue, espolvorea canela y refrigera 2 horas."],
+zh:["将1罐淡奶和1罐炼乳用小火不停搅拌熬煮，直到浓稠到能看见锅底，约30分钟。","离火后拌入4个打散的蛋黄和1茶匙香草精，分装到6个杯子里放凉。","将¾杯糖与½杯波特酒煮成浓糖浆。把3个蛋白打至硬性发泡，细细倒入热糖浆，继续打至有光泽。","把蛋白霜舀在焦糖上，撒肉桂粉，冷藏2小时。"],
+ja:["エバミルク1缶とコンデンスミルク1缶を弱火にかけ、絶えず混ぜながら、鍋底が見えるくらいとろみがつくまで約30分煮る。","火からおろし、溶いた卵黄4個とバニラ小さじ1を混ぜる。6つのグラスに分けて冷ます。","砂糖¾カップとポートワイン½カップを煮詰めて濃いシロップにする。卵白3個を角が立つまで泡立て、熱いシロップを細くたらしながら、つやが出るまで泡立てる。","キャラメルの上にメレンゲをのせ、シナモンをふって2時間冷やす。"],
+vi:["Đun 1 lon sữa đặc không đường và 1 lon sữa đặc có đường ở lửa nhỏ, khuấy liên tục đến khi đặc lại và thấy đáy nồi, khoảng 30 phút.","Tắt bếp, khuấy vào 4 lòng đỏ trứng đánh tan và 1 muỗng cà phê vani. Chia ra 6 ly và để nguội.","Đun ¾ chén đường với ½ chén rượu port thành xi-rô đặc. Đánh 3 lòng trắng trứng đến khi bông cứng rồi rót xi-rô nóng thành dòng mảnh, đánh đến khi bóng.","Múc meringue lên trên lớp caramel, rắc quế và để lạnh 2 tiếng."],
+ko:["무가당 연유 1캔과 가당 연유 1캔을 약불에서 계속 저으며 냄비 바닥이 보일 만큼 걸쭉해질 때까지 약 30분 졸입니다.","불에서 내려 풀어 둔 달걀노른자 4개와 바닐라 1작은술을 섞습니다. 잔 6개에 나누어 담고 식힙니다.","설탕 ¾컵과 포트와인 ½컵을 끓여 진한 시럽을 만듭니다. 달걀흰자 3개를 단단하게 거품 낸 뒤 뜨거운 시럽을 가늘게 부으며 윤기가 날 때까지 휘핑합니다.","캐러멜 위에 머랭을 올리고 계피를 뿌려 2시간 차게 식힙니다."]}}
+});
+Object.assign(PH,{
+"Tamal":["Tamal tolimence.jpg","WIKIRAICES","CC BY-SA 4.0"],
+"Patacones":["Patacones.JPG","Jdvillalobos","CC BY-SA 3.0"],
+"Pandebono":["Pandebono 1 (comprada en la Panadería Colombia Viva, en Barcelona, España).jpg","El Mono Español","CC BY-SA 4.0"],
+"Arroz con coco":["Arroz con coco.JPG","Adriblanco","CC BY-SA 4.0"],
+"Pollo a la brasa":["Pollo a la brasa pierna con papas.JPG","Dtarazona","Public domain"],
+"Papa a la huancaína":["Cuisine Perú Papa a la Huancaína.jpg","AgainErick","CC BY-SA 3.0"],
+"Arroz con pollo":["Arroz con pollo y papa a la huancaina.JPG","Dtarazona","Public domain"],
+"Suspiro a la limeña":["Suspiro de limeña.JPG","Wikimedia Commons","CC BY-SA 3.0"]
+});
+const G={
+"Caño Cristales":[["Cascadas Manto de La Virgen - Caño Cristales - La Macarena - Meta - Colombia.jpg","Gicaman","CC BY-SA 4.0"],["Caño cristales la macarena Ariari Meta Colombia.jpg","Sierraluisfer","CC BY-SA 4.0"],["Cascada los Cuarzos - Caño Cristales - La Macarena.jpg","Gicaman","CC BY-SA 4.0"]],
+"Valle de Cocora":[["Valle de Cocora, Colombia 02.jpg","Bernard Gagnon","CC BY-SA 4.0"],["Valle de Cocora, Colombia 05.jpg","Bernard Gagnon","CC BY-SA 4.0"],["Valle de Cocora, Colombia 07.jpg","Bernard Gagnon","CC BY-SA 4.0"]],
+"Cartagena":[["Sunset-cartagena-tower-dewired.jpg","Igvir Ramirez","CC BY-SA 2.0"],["Ciudad amurallada cartagena.jpg","Mar 21DS","CC BY-SA 4.0"],["La ciudad amurallada de Cartagena de Indias.JPG","Cinematicguy","CC BY-SA 4.0"]],
+"Eje Cafetero":[["Calle 5, Salento 01.jpg","Bernard Gagnon","CC BY-SA 4.0"],["Calle 5, Salento 03.jpg","Bernard Gagnon","CC BY-SA 4.0"],["Casa de la Pava, Salento 02.jpg","Bernard Gagnon","CC BY-SA 4.0"]],
+"Carnaval de Barranquilla":[["Baile de la Cumbia - Barranquilla.jpg","Norma Gòmez","CC BY 2.0"],["Carnaval de Barranquilla 2012 - 6964130855.jpg","Michele Mariani","CC BY-SA 2.0"],["Carnaval de Barranquilla - 6964126099.jpg","Michele Mariani","CC BY-SA 2.0"]],
+"Aves":[["Flame-rumped tanager (Ramphocelus flammigerus) female Las Tanagaras.jpg","Charles J. Sharp","CC BY-SA 4.0"],["Ramphocelus flammigerus (Toche asomacandela) - Hembra - Flickr - Alejandro Bayer (2).jpg","Alejandro Bayer Tamayo","CC BY-SA 2.0"],["Flame-rumped tanager (Ramphocelus flammigerus) male Las Tangaras.jpg","Charles J. Sharp","CC BY-SA 4.0"]],
+"Machu Picchu":[["Machu Picchu, Perú, 2015-07-30, DD 60.JPG","Diego Delso","CC BY-SA 4.0"],["Machu Picchu, Perú, 2015-07-30, DD 37.jpg","Diego Delso","CC BY-SA 4.0"],["Machu Picchu.png","Hiram Bingham III","Public domain"]],
+"Vinicunca":[["Rainbow Mountain Peru.jpg","Mareike Heuer (WMDE)","CC0"],["Vinicunca excursion 06.jpg","Codas","CC BY-SA 4.0"],["Vinicunca excursion 07.jpg","Codas","CC BY-SA 4.0"]],
+"Lago Titicaca":[["Islas flotantes de los Uros, Lago Titicaca, Perú, 2015-08-01, DD 40.JPG","Diego Delso","CC BY-SA 4.0"],["Islas flotantes de los Uros, Lago Titicaca, Perú, 2015-08-01, DD 32.JPG","Diego Delso","CC BY-SA 4.0"],["Pérou les uros du lac Titicaca (5).jpg","Pierre André Leclercq","CC BY-SA 4.0"]],
+"Líneas de Nazca":[["Líneas de Nazca, Nazca, Perú, 2015-07-29, DD 54.JPG","Diego Delso","CC BY-SA 4.0"],["Líneas de Nazca, Nazca, Perú, 2015-07-29, DD 58.JPG","Diego Delso","CC BY-SA 4.0"],["Líneas de Nazca, Nazca, Perú, 2015-07-29, DD 51.JPG","Diego Delso","CC BY-SA 4.0"]],
+"Amazonía":[["Morning in the Amazon, Pacaya-Samiria.jpg","Mark Goble","CC BY 2.0"],["Pacaya Samiria Marañon River (66217327).jpeg","Verlic Redclaw","CC BY 3.0"],["Callicebus cupreus Tambopata Research Center.jpg","Davidwfx","CC BY-SA 2.0"]],
+"Cusco":[["00 1558 Cusco Peru - Hochanden.jpg","W. Bulach","CC BY-SA 4.0"],["Cusco Cathedral-IMG.jpg","Kızıl","CC BY-SA 4.0"],["Cusco skyline - October 2025.jpg","WMrapids","CC0"]]
+};
+
 const VL={en:"en-US",es:"es-MX",zh:"zh-CN",ja:"ja-JP",vi:"vi-VN",ko:"ko-KR"};
 const canSpeak="speechSynthesis" in window&&"SpeechSynthesisUtterance" in window;
 let speaking=null,utts=[];
 function stopSpeak(){speaking=null;utts=[];if(canSpeak)try{speechSynthesis.cancel()}catch(e){}}
+function pickVoice(){
+  const L=S.lang,full=VL[L].toLowerCase();let vs=[];try{vs=speechSynthesis.getVoices()}catch(e){}
+  vs=vs.filter(v=>v.lang.replace("_","-").toLowerCase().startsWith(L));if(!vs.length)return null;
+  const score=v=>{const n=v.name.toLowerCase(),l=v.lang.replace("_","-").toLowerCase();let k=0;
+    if(/natural|neural/.test(n))k+=50;if(/premium|enhanced|siri/.test(n))k+=40;if(/google/.test(n))k+=30;
+    if(/compact|eloquence|espeak/.test(n))k-=30;
+    if(l===full)k+=8;else if(L==="es"&&/es-(us|419|co|pe)/.test(l))k+=6;
+    if(L==="zh"&&/(hk|tw|yue)/.test(l))k-=40;return k};
+  const best=vs.slice().sort((a,b)=>score(b)-score(a))[0];
+  return score(best)>=30?best:null;
+}
 function speak(id,text){
   if(!canSpeak)return;
   if(speaking===id){stopSpeak();render();return}
@@ -481,7 +598,8 @@ function speak(id,text){
   const run=()=>{
     if(speaking!==id)return;
     try{speechSynthesis.resume()}catch(e){}
-    utts=parts.map((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=VL[S.lang];u.rate=.95;u.volume=1;
+    const vc=pickVoice();
+    utts=parts.map((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=vc?vc.lang:VL[S.lang];if(vc)u.voice=vc;u.rate=1;u.pitch=1;u.volume=1;
       if(i===parts.length-1)u.onend=()=>{if(speaking===id){speaking=null;utts=[];render()}};
       u.onerror=e=>{if(e.error!=="interrupted"&&e.error!=="canceled"&&speaking===id){speaking=null;utts=[];render()}};
       return u});
@@ -492,7 +610,7 @@ function speak(id,text){
   render();
 }
 function listenBtn(id,getText){const w=el("div","listenwrap"),b=el("button","want listen",speaking===id?"■ "+t("stop"):"🔊 "+t("listen"));b.type="button";b.setAttribute("aria-pressed",String(speaking===id));b.onclick=()=>speak(id,getText());w.append(b);if(speaking===id)w.append(el("small","",t("noSound")));return w}
-if(canSpeak)try{speechSynthesis.getVoices()}catch(e){}
+if(canSpeak)try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
 let S={screen:"home",lang:"en",name:"",from:"",country:"co",tab:"dishes",want:[],quiz:null,open:null,prev:"home",rec:false};
 const ORDER=["home","register","lang","intro","choose"];
 const BACK={register:"home",lang:"register",intro:"lang",choose:"intro",country:"choose",quiz:"choose"};
@@ -543,25 +661,37 @@ function closeSheet(){S.open=null;S.rec=false;stopSpeak();renderSheet()}
 function renderSheet(){
   const bg=$("sheetbg");if(!S.open||!findItem(S.open)){bg.hidden=true;return}
   const it=findItem(S.open),sh=$("sheet");bg.hidden=false;
-  const ph=el("div","sheetph");ph.style.background=bands(it.c);ph.append(pimg(it.n,"l"));
+  const same=sh.dataset.n===it.n,og=sh.querySelector(".gal"),keep=same?sh.scrollTop:0,keepX=same&&og?og.scrollLeft:0;
+  const ph=el("div","sheetph"),gal=el("div","gal"),pics=[PH[it.n]].concat(G[it.n]||[]);
+  pics.forEach((p,ix)=>{const f=el("figure");f.style.background=bands(it.c);const i=fimg(p,"l",it.n);if(ix>0)i.loading="lazy";f.append(i,el("figcaption","",p[1]+" · "+p[2]));gal.append(f)});
+  ph.append(gal);
+  if(pics.length>1){
+    const ct=el("span","galct","1 / "+pics.length);gal.onscroll=()=>{ct.textContent=(Math.round(gal.scrollLeft/gal.clientWidth)+1)+" / "+pics.length};
+    const mv=d=>()=>gal.scrollBy({left:d*gal.clientWidth,behavior:"smooth"});
+    const pv=el("button","iconbtn galnav prev","‹"),nx=el("button","iconbtn galnav next","›");pv.type=nx.type="button";pv.setAttribute("aria-label","Previous photo");nx.setAttribute("aria-label","Next photo");pv.onclick=mv(-1);nx.onclick=mv(1);
+    ph.append(ct,pv,nx);
+  }
   const x=el("button","iconbtn sheetx","×");x.type="button";x.setAttribute("aria-label","Close");x.onclick=closeSheet;ph.append(x);
-  const body=el("div","sheetbody");body.append(el("h2","",it.n),el("p","",it.d[S.lang]||it.d.en));
+  const body=el("div","sheetbody");body.append(el("h2","",it.n));
+  if(pics.length>1)body.append(el("p","muted",t("swipe")));
+  body.append(el("p","",it.d[S.lang]||it.d.en));
   const rc=R[it.n],steps=rc&&(rc.s[S.lang]||rc.s.en);
   if(canSpeak)body.append(listenBtn("sheet:"+it.n,()=>it.n+". "+(it.d[S.lang]||it.d.en)+(S.rec&&steps?" "+t("recipeT")+". "+steps.join(" "):"")));
   if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(v=>ch.append(el("span","chip",v)));body.append(ch);
     if(rc){
-      if(S.rec){const bx=el("div","recipe");bx.append(el("h3","",t("recipeT")),el("small","",rc.m));const ol=el("ol");steps.forEach(x=>ol.append(el("li","",x)));bx.append(ol);body.append(bx)}
-      else{const rb=el("button","btn wide",t("recipe"));rb.type="button";rb.onclick=()=>{S.rec=true;const y=sh.scrollTop;renderSheet();sh.scrollTop=y};body.append(rb)}
+      if(S.rec){const bx=el("div","recipe");bx.append(el("h3","",t("recipeT")),el("small","",rc.m));const ol=el("ol");steps.forEach(v=>ol.append(el("li","",v)));bx.append(ol);body.append(bx)}
+      else{const rb=el("button","btn wide",t("recipe"));rb.type="button";rb.onclick=()=>{S.rec=true;renderSheet()};body.append(rb)}
     }
     const on=S.want.includes(it.n);const w=el("button","want",on?t("wanted"):t("want"));w.type="button";w.setAttribute("aria-pressed",String(on));
     w.onclick=()=>{S.want=on?S.want.filter(v=>v!==it.n):[...S.want,it.n];save();render()};body.append(w)}
-  const cr=el("p","muted",t("photo")+": "+PH[it.n][1]+" · "+PH[it.n][2]+" · Wikimedia Commons");cr.style.fontSize="12px";body.append(cr);
-  const keep=sh.dataset.n===it.n?sh.scrollTop:0;sh.dataset.n=it.n;sh.textContent="";sh.append(ph,body);sh.scrollTop=keep;
+  sh.dataset.n=it.n;sh.textContent="";sh.append(ph,body);sh.scrollTop=keep;gal.scrollLeft=keepX;
 }
 function renderCredits(){
   const L=$("creditlist");if(L.childElementCount)return;
   Object.keys(PH).forEach(n=>{const a=el("a","credit");a.href="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(PH[n][0].replace(/ /g,"_"));a.target="_blank";a.rel="noopener";
     const d=el("div");d.append(el("b","",n),document.createTextNode(PH[n][1]+" · "+PH[n][2]));a.append(pimg(n,"s"),d);L.append(a)});
+  Object.keys(G).forEach(n=>G[n].forEach((p,ix)=>{const a=el("a","credit");a.href="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(p[0].replace(/ /g,"_"));a.target="_blank";a.rel="noopener";
+    const d=el("div");d.append(el("b","",n+" "+(ix+2)),document.createTextNode(p[1]+" · "+p[2]));const i=fimg(p,"s",n);i.loading="lazy";a.append(i,d);L.append(a)}));
 }
 function confetti(){
   if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
@@ -621,7 +751,7 @@ document.addEventListener("click",e=>{
 $("back").onclick=()=>go(S.screen==="credits"?(S.prev||"home"):(BACK[S.screen]||"home"));
 $("sheetbg").onclick=e=>{if(e.target.id==="sheetbg")closeSheet()};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.open)closeSheet()});
-(function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?6:0)+Math.floor(i/2)].n);
+(function(){const st=$("strip"),names=[...DATA.co.dishes,...DATA.pe.dishes].map((d,i,a)=>a[(i%2?a.length/2:0)+Math.floor(i/2)].n);
   [...names,...names].forEach(n=>{const i=pimg(n,"s");i.loading="eager";st.append(i)});
   (function(){const i=new Image();i.onload=()=>{$("campus").style.backgroundImage='url("'+i.src+'")'};i.src=purl("Mission College","l")})();
   document.querySelectorAll("img[data-ph]").forEach(i=>{i.onerror=()=>i.remove();i.src=purl(i.dataset.ph,"l")})})();
