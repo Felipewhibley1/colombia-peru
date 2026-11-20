@@ -826,12 +826,13 @@ function confetti(){
   (function f(now){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.x+=p.s;p.r+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);x.restore()});
     if(now-t0<3200)requestAnimationFrame(f);else c.hidden=true})(t0);
 }
-const QN=10;
+const QN=5;
+const BANNER={pe:["Ceviche","Lomo saltado","Causa limeña"],co:["Bandeja paisa","Arepa","Empanadas","Ajiaco","Arroz con coco"]};
 function newQuiz(){
   const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-  const d=[],p=[];
-  for(const c of["co","pe"]){DATA[c].dishes.forEach(x=>d.push({c,n:x.n}));DATA[c].things.forEach(x=>{if(x.n!=="Aves"&&x.n!=="Amazonía")p.push({c,n:x.n})})}
-  S.quiz={q:sh(sh(d).slice(0,5).concat(sh(p).slice(0,5))),i:0,ans:null,wrong:null};
+  const k=2+Math.floor(Math.random()*2);
+  const pe=sh(BANNER.pe.slice()).slice(0,k).map(n=>({c:"pe",n})),co=sh(BANNER.co.slice()).slice(0,QN-k).map(n=>({c:"co",n}));
+  S.quiz={q:sh(pe.concat(co)),i:0,ans:null,wrong:null};
 }
 function renderQuiz(){
   if(!S.quiz||!S.quiz.q||S.quiz.q.length!==QN)newQuiz();
