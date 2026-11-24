@@ -205,6 +205,22 @@ footer{border-radius:16px;padding:10px 12px;margin-top:0}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;z-index:30;max-width:88%;text-align:center}
 .recipe .btn{align-self:flex-start}
 .pnav{display:flex;justify-content:space-between;gap:10px}
+.sheetbody .fact{align-self:flex-start;background:var(--bg)}
+.hist{background:var(--bg);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.hist h3{font-size:15px}
+.hist p{font-size:15px;margin:0}
+.tile b small{display:block;font-family:var(--font);font-size:12px;font-weight:500;letter-spacing:0;opacity:.9;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.big b small{font-size:13px}
+.thanks{align-self:stretch;display:flex;flex-direction:column;gap:10px;align-items:center}
+.thanks p{color:var(--muted);font-size:15px;margin:0}
+.thanks .lbl{font-size:13px;font-weight:600;color:var(--muted);margin-top:4px}
+.ig{display:flex;align-items:center;gap:12px;align-self:stretch;text-decoration:none;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left}
+.ig svg{flex:none;width:26px;height:26px}
+.ig div{min-width:0;flex:1}
+.ig b{display:block;font-size:16px}
+.ig span{display:block;font-size:14px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ig i{flex:none;font-style:normal;color:var(--accent);font-weight:600;font-size:18px}
+.ig:active{transform:scale(.99)}
 .pnav .want{max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
@@ -349,6 +365,11 @@ swipeDish:{en:"Swipe left or right to see more dishes",es:"Desliza a la izquierd
 takeQuiz:{en:"Take the quiz",es:"Hacer el quiz",zh:"参加测验",ja:"クイズに挑戦",vi:"Làm bài đố",ko:"퀴즈 풀기"},
 swipePlace:{en:"Swipe the photo for more pictures. Swipe the text to change place.",es:"Desliza la foto para ver más imágenes. Desliza el texto para cambiar de lugar.",zh:"滑动照片查看更多图片，滑动文字切换地点。",ja:"写真をスワイプすると他の写真、文章をスワイプすると次の場所へ。",vi:"Vuốt ảnh để xem thêm hình. Vuốt phần chữ để đổi địa điểm.",ko:"사진을 밀면 다른 사진, 글을 밀면 다른 장소로 이동합니다."},
 sharePlace:{en:"Look at this from {c}: {n}",es:"Mira esto de {c}: {n}",zh:"看看{c}的{n}",ja:"{c}の「{n}」を見てみて",vi:"Xem {n} của {c}",ko:"{c}의 {n}, 한번 보세요"},
+region:{en:"Region",es:"Región",zh:"地区",ja:"地域",vi:"Vùng",ko:"지역"},
+history:{en:"A little history",es:"Un poco de historia",zh:"小历史",ja:"ちょっとした歴史",vi:"Đôi nét lịch sử",ko:"짧은 역사"},
+thanks:{en:"Thank you for taking part!",es:"¡Gracias por participar!",zh:"感谢你的参与！",ja:"ご参加ありがとうございました！",vi:"Cảm ơn bạn đã tham gia!",ko:"참여해 주셔서 감사합니다!"},
+thanks2:{en:"We hope you enjoyed getting to know Peru and Colombia.",es:"Esperamos que hayas disfrutado conocer un poco de Perú y Colombia.",zh:"希望你喜欢这次了解秘鲁和哥伦比亚的旅程。",ja:"ペルーとコロンビアを知るひとときを楽しんでいただけたならうれしいです。",vi:"Hy vọng bạn đã thích thú khi tìm hiểu về Peru và Colombia.",ko:"페루와 콜롬비아를 알아가는 시간이 즐거우셨기를 바랍니다."},
+follow:{en:"Follow us on Instagram",es:"Síguenos en Instagram",zh:"在 Instagram 上关注我们",ja:"Instagramでフォローしてください",vi:"Theo dõi chúng tôi trên Instagram",ko:"인스타그램에서 팔로우해 주세요"},
 again:{en:"Play again",es:"Jugar otra vez",zh:"再玩一次",ja:"もう一度",vi:"Chơi lại",ko:"다시 하기"}
 };
 const CN={co:"Colombia",pe:"Perú"};
@@ -634,6 +655,155 @@ const G2={
 "Cusco":[["Cusco Cathedral 20241116 104952.jpg","Kızıl","CC BY-SA 4.0"],["Cusco 2023.jpg","Mojnsen","CC BY-SA 4.0"],["Cusco Peru Hillside.jpg","Allyson Hoffman","Public domain"]]
 };
 for(const k in G2)G[k]=G[k].concat(G2[k]);
+const RG={
+allco:{en:"All of Colombia",es:"Toda Colombia",zh:"哥伦比亚全国",ja:"コロンビア全土",vi:"Khắp Colombia",ko:"콜롬비아 전역"},
+lima:{en:"Lima (central coast)",es:"Lima (costa central)",zh:"利马（中部沿海）",ja:"リマ（中部海岸）",vi:"Lima (duyên hải miền trung)",ko:"리마 (중부 해안)"},
+coast:{en:"Coast of Peru",es:"Costa del Perú",zh:"秘鲁沿海",ja:"ペルーの海岸地方",vi:"Vùng duyên hải Peru",ko:"페루 해안 지방"}
+};
+const ORIGIN={
+"Bandeja paisa":{r:{en:"Antioquia and the Coffee Region",es:"Antioquia y Eje Cafetero",zh:"安蒂奥基亚与咖啡产区",ja:"アンティオキアとコーヒー地帯",vi:"Antioquia và Vùng Cà phê",ko:"안티오키아와 커피 지대"},h:{
+en:"It grew out of the meals of muleteers and farmers in the mountains of Antioquia, who needed plenty of energy for long working days. Under its current name, served on a big tray, it became famous in restaurants in the mid-1900s.",
+es:"Nació de la comida de los arrieros y campesinos de las montañas de Antioquia, que necesitaban mucha energía para jornadas largas. Con su nombre actual y servida en bandeja se hizo famosa en los restaurantes a mediados del siglo XX.",
+zh:"它源自安蒂奥基亚山区赶骡人和农民的饭食，他们需要充足的体力来应付漫长的劳作。20世纪中叶，它以现在的名字、盛在大托盘里，在餐馆中流行开来。",
+ja:"アンティオキアの山で働くラバ追いや農民の食事から生まれました。長い一日を乗り切るエネルギーが必要だったのです。今の名前で大皿に盛るスタイルは、20世紀半ばにレストランで広まりました。",
+vi:"Món này bắt nguồn từ bữa ăn của những người lùa la và nông dân vùng núi Antioquia, những người cần nhiều năng lượng cho ngày làm việc dài. Với tên gọi hiện nay và cách bày trên khay lớn, món trở nên nổi tiếng ở các nhà hàng vào giữa thế kỷ 20.",
+ko:"안티오키아 산악 지대의 노새 몰이꾼과 농부들이 먹던 식사에서 비롯되었습니다. 긴 하루 일을 버틸 든든한 힘이 필요했기 때문입니다. 지금의 이름으로 큰 쟁반에 담아 내는 방식은 20세기 중반 식당에서 유명해졌습니다."}},
+"Ajiaco":{r:{en:"Bogotá and the Andean high plateau",es:"Bogotá y altiplano cundiboyacense",zh:"波哥大及安第斯高原",ja:"ボゴタとアンデスの高原",vi:"Bogotá và cao nguyên Andes",ko:"보고타와 안데스 고원"},h:{
+en:"It comes from the Muisca, the Indigenous people of the high plateau, who already cooked soups of potato and corn. After the Spanish arrived, chicken, cream and capers were added.",
+es:"Viene de los muiscas, el pueblo indígena del altiplano, que ya cocinaban sopas de papa y maíz. Con la llegada de los españoles se sumaron el pollo, la crema de leche y las alcaparras.",
+zh:"它起源于高原上的原住民穆伊斯卡人，他们早就用土豆和玉米煮汤。西班牙人到来后，又加入了鸡肉、奶油和刺山柑。",
+ja:"高原に暮らした先住民ムイスカの人々が作っていた、じゃがいもととうもろこしのスープが始まりです。スペイン人が来てから、鶏肉、生クリーム、ケッパーが加わりました。",
+vi:"Món này bắt nguồn từ người Muisca, tộc người bản địa trên cao nguyên, vốn đã nấu súp khoai tây và ngô. Khi người Tây Ban Nha đến, thịt gà, kem sữa và nụ bạch hoa được thêm vào.",
+ko:"고원에 살던 원주민 무이스카족이 끓이던 감자와 옥수수 수프에서 시작되었습니다. 스페인 사람들이 온 뒤 닭고기, 크림, 케이퍼가 더해졌습니다."}},
+"Arepa":{r:RG.allco,h:{
+en:"The Indigenous peoples of what is now Colombia and Venezuela were making arepas long before the Spanish arrived. The name is thought to come from “erepa”, the word the Cumanagoto people used for corn. Today every region has its own kind.",
+es:"Los pueblos indígenas de lo que hoy son Colombia y Venezuela ya hacían arepas mucho antes de la llegada de los españoles. Se cree que el nombre viene de «erepa», la palabra con que el pueblo cumanagoto llamaba al maíz. Hoy cada región tiene la suya.",
+zh:"早在西班牙人到来之前，今天哥伦比亚和委内瑞拉一带的原住民就已经在做玉米饼了。据说它的名字来自库马纳戈托人称呼玉米的词“erepa”。如今每个地区都有自己的做法。",
+ja:"現在のコロンビアとベネズエラにあたる土地の先住民は、スペイン人が来るずっと前からアレパを作っていました。名前は、クマナゴト族がとうもろこしを指した言葉「エレパ」から来たといわれています。今では地域ごとに独自のアレパがあります。",
+vi:"Các dân tộc bản địa ở vùng nay là Colombia và Venezuela đã làm arepa từ rất lâu trước khi người Tây Ban Nha đến. Người ta cho rằng tên gọi bắt nguồn từ «erepa», từ mà người Cumanagoto dùng để gọi ngô. Ngày nay mỗi vùng có một kiểu arepa riêng.",
+ko:"오늘날의 콜롬비아와 베네수엘라 땅에 살던 원주민들은 스페인 사람들이 오기 훨씬 전부터 아레파를 만들었습니다. 이름은 쿠마나고토족이 옥수수를 부르던 말 '에레파'에서 왔다고 전해집니다. 지금은 지역마다 고유한 아레파가 있습니다."}},
+"Sancocho":{r:RG.allco,h:{
+en:"It descends from Spanish stews, which in the Americas blended with Indigenous cassava and corn and with plantain and seasoning of African origin. Every region has its own: with hen in Valle del Cauca, with fish on the Caribbean coast and with three meats in Antioquia.",
+es:"Desciende de los cocidos españoles, que en América se mezclaron con la yuca y el maíz indígenas y con el plátano y la sazón de origen africano. Cada región tiene el suyo: de gallina en el Valle del Cauca, de pescado en el Caribe y de tres carnes en Antioquia.",
+zh:"它源自西班牙的炖菜，到了美洲后融合了原住民的木薯和玉米，以及源自非洲的大蕉和调味方式。各地都有自己的版本：考卡山谷用母鸡，加勒比海沿岸用鱼，安蒂奥基亚则用三种肉。",
+ja:"スペインの煮込み料理がもとになり、アメリカ大陸で先住民のキャッサバやとうもろこし、アフリカ由来のプランテンや味つけと混ざり合いました。地域ごとに違いがあり、バジェ・デル・カウカでは雌鶏、カリブ海沿岸では魚、アンティオキアでは3種類の肉で作ります。",
+vi:"Món này có gốc từ các món hầm Tây Ban Nha, sang châu Mỹ thì hòa trộn với sắn và ngô của người bản địa cùng chuối nấu và cách nêm nếm gốc Phi. Mỗi vùng có một kiểu riêng: nấu gà mái ở Valle del Cauca, nấu cá ở vùng Caribe và nấu ba loại thịt ở Antioquia.",
+ko:"스페인의 스튜에서 유래해, 아메리카에서 원주민의 카사바와 옥수수, 아프리카에서 온 플랜틴과 양념이 어우러졌습니다. 지역마다 달라서 바예델카우카에서는 암탉, 카리브해 연안에서는 생선, 안티오키아에서는 세 가지 고기로 끓입니다."}},
+"Empanadas":{r:RG.allco,h:{
+en:"The idea of a filled pastry came from Spain, where it was made with wheat flour and baked. In Colombia it changed completely: corn dough, a filling of meat and potato, and deep-fried. Today it is the queen of street food.",
+es:"La idea de la masa rellena llegó de España, donde se hacía con harina de trigo y al horno. En Colombia cambió por completo: masa de maíz, relleno de carne y papa, y frita en aceite. Hoy es la reina de la comida callejera.",
+zh:"包馅面食的做法来自西班牙，那里用小麦面粉烤制。到了哥伦比亚，它完全变了样：改用玉米面团，包入肉和土豆，再下油锅炸。如今它是街头小吃之王。",
+ja:"具を包む料理はスペインから伝わりました。スペインでは小麦粉の生地をオーブンで焼きます。コロンビアではとうもろこしの生地に肉とじゃがいもを包み、油で揚げる形にすっかり変わりました。今では屋台料理の女王です。",
+vi:"Ý tưởng bánh có nhân đến từ Tây Ban Nha, nơi bánh được làm bằng bột mì và nướng lò. Ở Colombia, bánh thay đổi hoàn toàn: vỏ bột ngô, nhân thịt và khoai tây, rồi chiên ngập dầu. Ngày nay đây là nữ hoàng của ẩm thực đường phố.",
+ko:"속을 채운 빵이라는 발상은 스페인에서 왔는데, 그곳에서는 밀가루 반죽을 오븐에 구웠습니다. 콜롬비아에서는 옥수수 반죽에 고기와 감자를 넣어 기름에 튀기는 방식으로 완전히 바뀌었습니다. 지금은 길거리 음식의 여왕입니다."}},
+"Buñuelos":{r:{en:"Antioquia and all of Colombia",es:"Antioquia y toda Colombia",zh:"安蒂奥基亚及全国",ja:"アンティオキアとコロンビア全土",vi:"Antioquia và khắp Colombia",ko:"안티오키아와 콜롬비아 전역"},h:{
+en:"The buñuelo arrived with the Spanish, who had inherited it from Arab cooking. In Colombia the recipe was transformed with salty costeño cheese and cassava starch. People eat them with a custard called natilla during the nine nights of prayer and carols before Christmas, from December 16 to 24.",
+es:"El buñuelo llegó con los españoles, que lo heredaron de la cocina árabe. En Colombia la receta se transformó con queso costeño y almidón de yuca. Se comen con natilla durante la Novena de Aguinaldos, del 16 al 24 de diciembre.",
+zh:"这种炸面团由西班牙人带来，而西班牙人又是从阿拉伯饮食中学来的。在哥伦比亚，配方变成了使用咸味的沿海奶酪和木薯淀粉。每年12月16日至24日的圣诞九日祈祷期间，人们会配着一种叫 natilla 的奶冻一起吃。",
+ja:"ブニュエロはスペイン人が伝えたもので、もとはアラブの料理から受け継がれました。コロンビアでは塩気のあるコステーニョチーズとキャッサバでんぷんを使うレシピに変わりました。12月16日から24日までのクリスマス前の9日間の祈りの期間に、ナティージャというカスタードと一緒に食べます。",
+vi:"Buñuelo đến cùng người Tây Ban Nha, vốn thừa hưởng món này từ ẩm thực Ả Rập. Ở Colombia, công thức được biến đổi với phô mai mặn costeño và bột sắn. Người ta ăn món này với bánh sữa natilla trong chín đêm cầu nguyện trước Giáng sinh, từ ngày 16 đến 24 tháng 12.",
+ko:"부뉴엘로는 스페인 사람들이 들여왔는데, 그들 역시 아랍 요리에서 물려받은 음식입니다. 콜롬비아에서는 짭짤한 코스테뇨 치즈와 카사바 전분을 쓰는 조리법으로 바뀌었습니다. 12월 16일부터 24일까지 이어지는 성탄 전 9일 기도 기간에 나티야라는 커스터드와 함께 먹습니다."}},
+"Tamal":{r:{en:"Tolima (central Andes)",es:"Tolima (centro andino)",zh:"托利马省（安第斯中部）",ja:"トリマ県（アンデス中部）",vi:"Tolima (miền trung Andes)",ko:"톨리마 (안데스 중부)"},h:{
+en:"The tamal comes from the Indigenous cultures of the Americas, which have wrapped corn dough in leaves for thousands of years; its name comes from the Nahuatl word “tamalli”, meaning wrapped. In Colombia it is wrapped in plantain leaves, and the most famous one is from Tolima, with rice, peas, chicken and pork.",
+es:"El tamal viene de las culturas indígenas de América, que envuelven masa de maíz en hojas desde hace miles de años; su nombre viene del náhuatl «tamalli», que significa envuelto. En Colombia se envuelve en hoja de plátano, y el más famoso es el tolimense, con arroz, arveja, pollo y cerdo.",
+zh:"玉米粽源自美洲的原住民文化，他们用叶子包裹玉米面团已有数千年历史；它的名字来自纳瓦特尔语“tamalli”，意思是“包起来的”。在哥伦比亚，人们用大蕉叶包裹，最有名的是托利马省的做法，里面有米饭、豌豆、鸡肉和猪肉。",
+ja:"タマルはアメリカ大陸の先住民文化から生まれた料理で、とうもろこしの生地を葉で包む習慣は数千年前から続いています。名前はナワトル語の「タマリ」（包んだもの）に由来します。コロンビアではプランテンの葉で包み、いちばん有名なのは米、えんどう豆、鶏肉、豚肉が入ったトリマ風です。",
+vi:"Tamal bắt nguồn từ các nền văn hóa bản địa châu Mỹ, nơi người ta đã gói bột ngô trong lá từ hàng nghìn năm trước; tên gọi xuất phát từ «tamalli» trong tiếng Nahuatl, nghĩa là được gói lại. Ở Colombia, tamal được gói bằng lá chuối, nổi tiếng nhất là kiểu Tolima với cơm, đậu Hà Lan, thịt gà và thịt heo.",
+ko:"타말은 아메리카 원주민 문화에서 온 음식으로, 옥수수 반죽을 잎에 싸는 방식은 수천 년 전부터 이어져 왔습니다. 이름은 나와틀어로 '싼 것'을 뜻하는 '타말리'에서 왔습니다. 콜롬비아에서는 플랜틴 잎으로 싸며, 쌀, 완두콩, 닭고기, 돼지고기를 넣은 톨리마식이 가장 유명합니다."}},
+"Patacones":{r:{en:"Caribbean and Pacific coasts",es:"Costas Caribe y Pacífica",zh:"加勒比海与太平洋沿岸",ja:"カリブ海と太平洋の沿岸",vi:"Bờ biển Caribe và Thái Bình Dương",ko:"카리브해와 태평양 연안"},h:{
+en:"Plantains reached the Americas in the 1500s, and the habit of frying them twice comes from the African-rooted cooking of the Caribbean. The name is said to come from the patacón, an old silver coin, because of its round, flattened shape.",
+es:"El plátano llegó a América en el siglo XVI, y la costumbre de freírlo dos veces viene de la cocina de raíz africana del Caribe. Se dice que su nombre viene del patacón, una antigua moneda de plata, por su forma redonda y aplastada.",
+zh:"大蕉在16世纪传入美洲，而“炸两遍”的做法来自加勒比地区带有非洲根源的烹饪传统。据说它的名字来自一种叫 patacón 的古银币，因为它又圆又扁。",
+ja:"プランテンは16世紀にアメリカ大陸へ伝わり、二度揚げする習慣はカリブ海のアフリカ系の料理から来ています。丸く平たい形が昔の銀貨「パタコン」に似ていることから、この名前がついたといわれます。",
+vi:"Chuối nấu đến châu Mỹ vào thế kỷ 16, và thói quen chiên hai lần bắt nguồn từ ẩm thực gốc Phi ở vùng Caribe. Người ta nói tên gọi đến từ patacón, một đồng bạc cổ, vì hình dáng tròn và dẹt của nó.",
+ko:"플랜틴은 16세기에 아메리카에 들어왔고, 두 번 튀기는 방식은 카리브해의 아프리카계 요리 전통에서 왔습니다. 둥글고 납작한 모양이 옛 은화 '파타콘'을 닮아 이런 이름이 붙었다고 합니다."}},
+"Pandebono":{r:{en:"Valle del Cauca (Cali)",es:"Valle del Cauca (Cali)",zh:"考卡山谷省（卡利）",ja:"バジェ・デル・カウカ県（カリ）",vi:"Valle del Cauca (Cali)",ko:"바예델카우카 (칼리)"},h:{
+en:"Nobody knows for sure where it comes from. One story says it was born at Hacienda El Bono, on the road between Dagua and Cali, where it was baked for the workers; another says an Italian baker in Cali used to sell it shouting “pane del buono”, the good bread.",
+es:"Nadie sabe con certeza de dónde viene. Una versión dice que nació en la Hacienda El Bono, en el camino entre Dagua y Cali, donde se horneaba para los trabajadores; otra cuenta que un panadero italiano de Cali lo pregonaba como «pane del buono», el pan bueno.",
+zh:"没有人确切知道它的来历。一种说法是它诞生于达瓜和卡利之间路上的埃尔博诺庄园，那里烤这种面包给工人吃；另一种说法是卡利的一位意大利面包师叫卖时喊着“pane del buono”，意思是“好面包”。",
+ja:"はっきりした起源はわかっていません。ダグアとカリを結ぶ道沿いのエル・ボノ農園で、働く人たちのために焼かれたのが始まりという説があります。カリのイタリア人のパン職人が「パーネ・デル・ブオーノ（おいしいパン）」と呼び売りしていたから、という説もあります。",
+vi:"Không ai biết chắc món này từ đâu ra. Một giả thuyết kể rằng nó ra đời ở trang trại El Bono, trên đường giữa Dagua và Cali, nơi người ta nướng bánh cho công nhân; giả thuyết khác kể rằng một thợ bánh người Ý ở Cali rao bán nó là «pane del buono», tức bánh mì ngon.",
+ko:"정확한 유래는 아무도 모릅니다. 다과와 칼리 사이 길가에 있던 엘 보노 농장에서 일꾼들을 위해 구운 데서 시작되었다는 이야기가 있고, 칼리의 이탈리아인 제빵사가 '파네 델 부오노(맛있는 빵)'라고 외치며 팔았다는 이야기도 있습니다."}},
+"Arroz con coco":{r:{en:"Caribbean coast",es:"Costa Caribe",zh:"加勒比海沿岸",ja:"カリブ海沿岸",vi:"Bờ biển Caribe",ko:"카리브해 연안"},h:{
+en:"It was born on the Caribbean coast, where the rice brought by the Spanish met the coconut and cooking of African heritage. For the dark version, the coconut milk is cooked down until it caramelizes: that is called titoté. It is served with fried fish and patacones.",
+es:"Nació en la costa Caribe, donde el arroz que trajeron los españoles se encontró con el coco y con la cocina de herencia africana. Para la versión oscura se reduce la leche de coco hasta que se carameliza: eso es el titoté. Acompaña al pescado frito y a los patacones.",
+zh:"它诞生于加勒比海沿岸，西班牙人带来的大米在那里遇上了椰子和带有非洲传统的烹饪方式。做深色版本时，要把椰奶熬到焦糖化，这种焦香的椰渣叫 titoté。它通常搭配炸鱼和炸大蕉饼一起吃。",
+ja:"カリブ海沿岸で生まれた料理です。スペイン人が持ち込んだ米が、ココナッツとアフリカ系の料理の伝統に出会いました。色の濃いタイプは、ココナッツミルクをカラメル状になるまで煮詰めて作り、これを「ティトテ」と呼びます。揚げ魚やパタコンに添えて食べます。",
+vi:"Món này ra đời ở bờ biển Caribe, nơi gạo do người Tây Ban Nha mang đến gặp dừa và cách nấu nướng mang di sản châu Phi. Với phiên bản sẫm màu, nước cốt dừa được đun cạn đến khi thành caramel, gọi là titoté. Món này ăn kèm cá chiên và patacones.",
+ko:"카리브해 연안에서 태어난 음식입니다. 스페인 사람들이 가져온 쌀이 코코넛, 그리고 아프리카의 전통을 이은 요리법과 만났습니다. 색이 진한 종류는 코코넛 밀크를 캐러멜처럼 될 때까지 졸여 만드는데, 이것을 '티토테'라고 합니다. 생선튀김과 파타콘에 곁들여 먹습니다."}},
+"Ceviche":{r:RG.coast,h:{
+en:"About 2,000 years ago, the Moche people of the northern coast already prepared fish with the juice of a sour fruit called tumbo. The Spanish brought limes and onions, and Japanese immigrants taught cooks to marinate it for only a few minutes. In 2023 UNESCO added it to its list of Intangible Cultural Heritage of Humanity.",
+es:"Hace unos 2.000 años, los moches de la costa norte ya preparaban pescado con el jugo de una fruta ácida llamada tumbo. Los españoles trajeron el limón y la cebolla, y los inmigrantes japoneses enseñaron a marinarlo solo unos minutos. En 2023 la UNESCO lo inscribió como Patrimonio Cultural Inmaterial de la Humanidad.",
+zh:"大约两千年前，北部沿海的莫切人就已经用一种叫 tumbo 的酸味水果的汁来处理鱼肉。西班牙人带来了青柠和洋葱，日本移民则教会人们只腌几分钟。2023年，联合国教科文组织将它列入人类非物质文化遗产名录。",
+ja:"約2,000年前、北部海岸のモチェの人々は、トゥンボというすっぱい果物の汁で魚を調理していました。スペイン人がライムと玉ねぎを持ち込み、日本人移民が数分だけ漬ける方法を広めました。2023年にはユネスコの無形文化遺産に登録されました。",
+vi:"Khoảng 2.000 năm trước, người Moche ở bờ biển phía bắc đã chế biến cá với nước ép của một loại quả chua tên là tumbo. Người Tây Ban Nha mang đến chanh và hành tây, còn người nhập cư Nhật Bản dạy cách chỉ ngâm cá vài phút. Năm 2023, UNESCO ghi danh món này là Di sản Văn hóa Phi vật thể của Nhân loại.",
+ko:"약 2,000년 전 북부 해안의 모체 사람들은 이미 툼보라는 신 과일의 즙으로 생선을 요리했습니다. 스페인 사람들이 라임과 양파를 가져왔고, 일본 이민자들은 몇 분만 절이는 방법을 전했습니다. 2023년 유네스코 인류무형문화유산에 등재되었습니다."}},
+"Lomo saltado":{r:RG.lima,h:{
+en:"It was born in Lima in the late 1800s, when Chinese immigrants opened small restaurants and brought the wok, high heat and soy sauce. That technique blended with Peruvian ingredients such as yellow chili and potatoes, and that is how chifa cooking was born.",
+es:"Nació en Lima a finales del siglo XIX, cuando los inmigrantes chinos abrieron sus fondas y trajeron el wok, el fuego alto y el sillao. Esa técnica se mezcló con ingredientes peruanos como el ají amarillo y la papa, y así surgió la cocina chifa.",
+zh:"它诞生于19世纪末的利马，当时华人移民开起小饭馆，带来了炒锅、大火快炒和酱油。这种技法与黄辣椒、土豆等秘鲁食材相结合，于是有了被称为 chifa 的秘鲁中餐。",
+ja:"19世紀の終わりにリマで生まれました。中国からの移民が食堂を開き、中華鍋、強火、しょうゆを持ち込んだのです。その技が黄色い唐辛子やじゃがいもなどペルーの食材と結びつき、「チーファ」と呼ばれるペルー風中華料理が生まれました。",
+vi:"Món này ra đời ở Lima vào cuối thế kỷ 19, khi người nhập cư Trung Hoa mở quán ăn và mang theo chảo wok, lửa lớn và nước tương. Kỹ thuật ấy hòa quyện với nguyên liệu Peru như ớt vàng và khoai tây, từ đó hình thành ẩm thực chifa.",
+ko:"19세기 말 리마에서 탄생했습니다. 중국 이민자들이 식당을 열면서 웍과 센 불, 간장을 들여왔습니다. 이 조리법이 노란 고추, 감자 같은 페루 재료와 만나 '치파'라 불리는 페루식 중국 요리가 생겨났습니다."}},
+"Ají de gallina":{r:RG.lima,h:{
+en:"It is thought to descend from manjar blanco, a medieval Spanish dish made with shredded hen breast, milk and almonds. In colonial Peru, cooks transformed it with yellow chili, bread and nuts, and it went from sweet to savory.",
+es:"Se cree que desciende del manjar blanco, un plato español de la Edad Media hecho con pechuga de gallina deshilachada, leche y almendras. En el Perú colonial las cocineras lo transformaron con ají amarillo, pan y nueces, y pasó de dulce a salado.",
+zh:"人们认为它源自中世纪西班牙的一道菜“manjar blanco”，用鸡胸肉丝、牛奶和杏仁做成。在殖民时期的秘鲁，厨师们加入黄辣椒、面包和坚果，把它从甜味变成了咸味。",
+ja:"中世スペインの「マンハル・ブランコ」という料理がもとになったと考えられています。ほぐした鶏むね肉、牛乳、アーモンドで作る料理でした。植民地時代のペルーで、料理人たちが黄色い唐辛子、パン、ナッツを加え、甘い料理から塩味の料理に変わりました。",
+vi:"Người ta cho rằng món này bắt nguồn từ manjar blanco, một món Tây Ban Nha thời Trung cổ làm từ ức gà xé, sữa và hạnh nhân. Ở Peru thời thuộc địa, các đầu bếp đã biến đổi nó với ớt vàng, bánh mì và quả hạch, và món từ ngọt chuyển thành mặn.",
+ko:"중세 스페인 요리 '만하르 블랑코'에서 유래한 것으로 여겨집니다. 잘게 찢은 닭가슴살과 우유, 아몬드로 만든 음식이었습니다. 식민지 시대 페루에서 요리사들이 노란 고추, 빵, 견과류를 넣어 바꾸면서 단 음식에서 짭짤한 음식이 되었습니다."}},
+"Causa limeña":{r:RG.lima,h:{
+en:"Its name comes from the Quechua word “kausay”, meaning life or sustenance, which is how people referred to the potato. A popular story says that during the wars of the 1800s the women of Lima made and sold it to support the soldiers: it was food “for the cause”.",
+es:"Su nombre viene del quechua «kausay», que significa vida o sustento, como llamaban a la papa. Una historia popular cuenta que durante las guerras del siglo XIX las mujeres de Lima la preparaban y vendían para apoyar a los soldados: era comida «por la causa».",
+zh:"它的名字来自克丘亚语“kausay”，意思是生命或食粮，人们曾这样称呼土豆。民间流传，在19世纪的战争期间，利马的妇女做这道菜并出售来支援士兵，所以说这是“为了事业（causa）”的食物。",
+ja:"名前はケチュア語の「カウサイ」に由来します。命や糧という意味で、じゃがいものことをそう呼んでいました。19世紀の戦争のあいだ、リマの女性たちが兵士を支えるためにこの料理を作って売り、「大義（カウサ）のための食べ物」と呼ばれた、という話も広く伝わっています。",
+vi:"Tên món bắt nguồn từ «kausay» trong tiếng Quechua, nghĩa là sự sống hay lương thực, cách người xưa gọi khoai tây. Một câu chuyện dân gian kể rằng trong các cuộc chiến ở thế kỷ 19, phụ nữ Lima làm và bán món này để ủng hộ binh lính: đó là món ăn «vì đại nghĩa» (por la causa).",
+ko:"이름은 케추아어 '카우사이'에서 왔습니다. 생명이나 양식을 뜻하는 말로, 감자를 그렇게 불렀습니다. 19세기 전쟁 때 리마의 여성들이 병사들을 돕기 위해 이 음식을 만들어 팔았고, 그래서 '대의(카우사)를 위한 음식'이라 불렸다는 이야기도 널리 전해집니다."}},
+"Anticuchos":{r:{en:"Lima and all of Peru",es:"Lima y todo el Perú",zh:"利马及秘鲁全国",ja:"リマとペルー全土",vi:"Lima và khắp Peru",ko:"리마와 페루 전역"},h:{
+en:"In Inca times, people already grilled llama meat on small sticks. In the colonial period, enslaved Africans took the beef heart that the Spanish threw away and marinated it with chili and spices. Today street cooks called anticucheras grill them on street corners every night.",
+es:"Ya en tiempos de los incas se asaba carne de llama ensartada en palitos. En la Colonia, las personas africanas esclavizadas tomaron el corazón de res que los españoles desechaban y lo adobaron con ají y especias. Hoy las anticucheras los asan cada noche en las esquinas.",
+zh:"早在印加时代，人们就把骆马肉串在小棍上烤着吃。殖民时期，被奴役的非洲人拿西班牙人丢弃的牛心，用辣椒和香料腌制。如今，被称为 anticucheras 的女摊主每晚都在街角烤串。",
+ja:"インカの時代から、リャマの肉を串に刺して焼いていました。植民地時代には、奴隷にされたアフリカの人々が、スペイン人が捨てていた牛の心臓を唐辛子とスパイスで味つけしました。今では「アンティクチェラ」と呼ばれる女性たちが、毎晩街角で焼いています。",
+vi:"Từ thời Inca, người ta đã nướng thịt lạc đà llama xiên que. Thời thuộc địa, những người châu Phi bị bắt làm nô lệ lấy phần tim bò mà người Tây Ban Nha bỏ đi và ướp với ớt cùng gia vị. Ngày nay các cô bán hàng gọi là anticucheras nướng món này mỗi tối ở các góc phố.",
+ko:"잉카 시대부터 라마 고기를 꼬치에 꿰어 구워 먹었습니다. 식민지 시대에는 노예가 된 아프리카 사람들이 스페인 사람들이 버리던 소 염통을 고추와 향신료로 양념했습니다. 지금은 '안티쿠체라'라 불리는 상인들이 매일 밤 길모퉁이에서 굽습니다."}},
+"Picarones":{r:RG.lima,h:{
+en:"They were born in colonial Lima as a local version of Spanish buñuelos. Afro-Peruvian cooks changed the dough, using native squash and sweet potato, and sold them in the streets and at religious processions.",
+es:"Nacieron en la Lima colonial como una versión local de los buñuelos españoles. Las cocineras afroperuanas cambiaron la masa usando zapallo y camote, ingredientes de la tierra, y los vendían en las calles y en las procesiones.",
+zh:"它诞生于殖民时期的利马，是西班牙炸面团 buñuelos 的本地版本。非裔秘鲁厨娘改用本地的南瓜和红薯来和面，并在街头和宗教游行中出售。",
+ja:"植民地時代のリマで、スペインの揚げ菓子ブニュエロの地元版として生まれました。アフリカ系ペルー人の女性たちが、生地に地元のかぼちゃとさつまいもを使い、街角や宗教行列で売りました。",
+vi:"Món này ra đời ở Lima thời thuộc địa như một phiên bản địa phương của bánh buñuelos Tây Ban Nha. Các nữ đầu bếp người Peru gốc Phi đổi công thức bột, dùng bí và khoai lang bản địa, rồi bán trên đường phố và trong các đám rước tôn giáo.",
+ko:"식민지 시대 리마에서 스페인식 튀김 과자 부뉴엘로의 현지판으로 태어났습니다. 아프리카계 페루 여성들이 이 땅의 호박과 고구마로 반죽을 바꾸어 거리와 종교 행렬에서 팔았습니다."}},
+"Pollo a la brasa":{r:{en:"Chaclacayo, Lima",es:"Chaclacayo, Lima",zh:"利马的查克拉卡约",ja:"リマ県チャクラカヨ",vi:"Chaclacayo, Lima",ko:"리마의 차클라카요"},h:{
+en:"It was created in 1950 by Roger Schuler, a Swiss immigrant, on his farm in Chaclacayo, near Lima, where he opened the restaurant La Granja Azul. His friend Franz Ulrich invented the rotating oven to roast many chickens at once. Since 2004 it has been part of Peru's National Cultural Heritage.",
+es:"Lo creó en 1950 Roger Schuler, un inmigrante suizo, en su granja de Chaclacayo, cerca de Lima, donde abrió el restaurante La Granja Azul. Su amigo Franz Ulrich inventó el horno giratorio para asar muchos pollos a la vez. Desde 2004 es Patrimonio Cultural de la Nación.",
+zh:"1950年，瑞士移民罗杰·舒勒在利马附近查克拉卡约的农场里创造了这道菜，并在那里开了“蓝色农庄”餐厅。他的朋友弗朗茨·乌尔里希发明了旋转烤炉，可以同时烤很多只鸡。自2004年起，它被列为秘鲁国家文化遗产。",
+ja:"1950年、スイスからの移民ロジェ・シューラーが、リマ近郊チャクラカヨの農場で考え出し、そこにレストラン「ラ・グランハ・アスール」を開きました。友人のフランツ・ウルリッヒが、たくさんの鶏を一度に焼ける回転式オーブンを発明しました。2004年からペルーの国家文化遺産になっています。",
+vi:"Món này do Roger Schuler, một người nhập cư Thụy Sĩ, tạo ra năm 1950 tại trang trại của ông ở Chaclacayo, gần Lima, nơi ông mở nhà hàng La Granja Azul. Bạn ông, Franz Ulrich, phát minh ra lò quay để nướng nhiều con gà cùng lúc. Từ năm 2004, món này là Di sản Văn hóa Quốc gia của Peru.",
+ko:"1950년 스위스 이민자 로저 슐러가 리마 근처 차클라카요의 농장에서 만들어 냈고, 그곳에 식당 '라 그랑하 아술'을 열었습니다. 친구 프란츠 울리히가 여러 마리의 닭을 한꺼번에 굽는 회전식 오븐을 발명했습니다. 2004년부터 페루의 국가문화유산입니다."}},
+"Papa a la huancaína":{r:{en:"Huancayo (central Andes)",es:"Huancayo (sierra central)",zh:"万卡约（安第斯中部）",ja:"ワンカヨ（アンデス中部）",vi:"Huancayo (miền trung Andes)",ko:"우앙카요 (안데스 중부)"},h:{
+en:"The best-known story says it was born in the late 1800s, during the building of the Central Railway between Lima and Huancayo. Women from Huancayo sold the workers boiled potatoes with a sauce of cheese and chili: they were the potatoes “of the lady from Huancayo”.",
+es:"La historia más contada dice que nació a finales del siglo XIX, durante la construcción del Ferrocarril Central entre Lima y Huancayo. Las mujeres de Huancayo vendían a los obreros papas sancochadas con una salsa de queso y ají: eran las papas «de la huancaína».",
+zh:"流传最广的说法是，它诞生于19世纪末修建利马至万卡约的中央铁路期间。万卡约的妇女把水煮土豆配上奶酪辣椒酱卖给工人，人们就叫它“万卡约姑娘的土豆”。",
+ja:"いちばんよく語られる話では、19世紀の終わり、リマとワンカヨを結ぶ中央鉄道の建設中に生まれたとされます。ワンカヨの女性たちが、ゆでたじゃがいもにチーズと唐辛子のソースをかけて作業員に売り、「ワンカヨ娘のじゃがいも」と呼ばれました。",
+vi:"Câu chuyện được kể nhiều nhất nói rằng món này ra đời cuối thế kỷ 19, trong thời gian xây dựng Đường sắt Trung tâm nối Lima với Huancayo. Phụ nữ Huancayo bán cho công nhân khoai tây luộc với sốt phô mai và ớt: đó là khoai tây «của cô gái Huancayo».",
+ko:"가장 널리 알려진 이야기에 따르면, 19세기 말 리마와 우앙카요를 잇는 중앙철도 공사 때 생겨났습니다. 우앙카요 여성들이 삶은 감자에 치즈와 고추 소스를 얹어 일꾼들에게 팔았고, 사람들은 이를 '우앙카요 아가씨의 감자'라고 불렀습니다."}},
+"Arroz con pollo":{r:RG.coast,h:{
+en:"Rice came to Peru with the Spanish. This dish is a relative of the duck with rice of the northern coast, from Chiclayo and Lambayeque: chicken, which cost less, turned it into everyday food. Its green color comes from blended cilantro.",
+es:"El arroz llegó al Perú con los españoles. Este plato es pariente del arroz con pato de la costa norte, de Chiclayo y Lambayeque: el pollo, más barato, lo volvió comida de todos los días. Su color verde viene del culantro licuado.",
+zh:"大米是随西班牙人传入秘鲁的。这道菜与北部沿海奇克拉约和兰巴耶克的鸭肉饭是近亲：鸡肉更便宜，让它成了家常菜。它的绿色来自打成汁的香菜。",
+ja:"米はスペイン人とともにペルーに伝わりました。この料理は、北部海岸のチクラヨやランバイェケの鴨ごはんの親戚です。鴨より安い鶏肉を使うことで、毎日の家庭料理になりました。緑色はミキサーにかけたパクチーの色です。",
+vi:"Gạo đến Peru cùng người Tây Ban Nha. Món này là họ hàng của cơm vịt ở bờ biển phía bắc, vùng Chiclayo và Lambayeque: thịt gà rẻ hơn đã biến nó thành món ăn hằng ngày. Màu xanh của cơm đến từ rau mùi xay nhuyễn.",
+ko:"쌀은 스페인 사람들과 함께 페루에 들어왔습니다. 이 요리는 북부 해안 치클라요와 람바예케의 오리 밥과 친척뻘로, 더 저렴한 닭고기를 쓰면서 일상 음식이 되었습니다. 초록빛은 갈아 넣은 고수에서 나옵니다."}},
+"Suspiro a la limeña":{r:RG.lima,h:{
+en:"Its base, a milk caramel called manjar blanco, came to Lima with the Spanish. The story goes that the recipe belonged to Amparo Ayarza and that her husband, the poet José Gálvez Barrenechea, named it because it is soft and sweet like the sigh of a woman from Lima.",
+es:"Su base, el manjar blanco, llegó a Lima con los españoles. Se cuenta que la receta era de Amparo Ayarza y que su esposo, el poeta José Gálvez Barrenechea, le puso el nombre porque es suave y dulce como el suspiro de una limeña.",
+zh:"它的底层是一种叫 manjar blanco 的牛奶焦糖酱，随西班牙人传到利马。相传配方出自安帕罗·阿亚尔萨之手，她的丈夫、诗人何塞·加尔韦斯·巴雷内切亚为它取了这个名字，因为它像利马女子的叹息一样轻柔甜美。",
+ja:"土台になるミルクキャラメル「マンハル・ブランコ」は、スペイン人とともにリマに伝わりました。レシピはアンパロ・アヤルサのもので、夫の詩人ホセ・ガルベス・バレネチェアが「リマの女性のため息のようにやわらかく甘い」と名づけた、と伝えられています。",
+vi:"Phần nền của món là kẹo sữa manjar blanco, đến Lima cùng người Tây Ban Nha. Tương truyền công thức là của bà Amparo Ayarza, và chồng bà, nhà thơ José Gálvez Barrenechea, đã đặt tên cho món vì nó mềm và ngọt như tiếng thở dài của một cô gái Lima.",
+ko:"바탕이 되는 밀크 캐러멜 '만하르 블랑코'는 스페인 사람들과 함께 리마에 들어왔습니다. 조리법은 암파로 아야르사의 것이고, 남편인 시인 호세 갈베스 바레네체아가 '리마 여인의 한숨처럼 부드럽고 달콤하다'며 이름을 붙였다고 전해집니다."}}
+};
+for(const c of["co","pe"])DATA[c].dishes.forEach(x=>{const o=ORIGIN[x.n];if(o){x.r=o.r;x.h=o.h}});
+
 
 const VL={en:"en-US",es:"es-MX",zh:"zh-CN",ja:"ja-JP",vi:"vi-VN",ko:"ko-KR"};
 const canSpeak="speechSynthesis" in window&&"SpeechSynthesisUtterance" in window;
@@ -713,7 +883,8 @@ function renderCountry(){
   const list=$("list");list.textContent="";
   C[S.tab].forEach((it,ix)=>{
     const b=el("button","tile"+(ix===0?" big":""));b.type="button";b.style.background=bands(it.c);
-    b.append(pimg(it.n,ix===0?"l":"m"),el("b","",it.n));
+    const nb=el("b","",it.n);if(it.r)nb.append(el("small","",it.r[S.lang]||it.r.en));
+    b.append(pimg(it.n,ix===0?"l":"m"),nb);
     if(S.want.includes(it.n))b.append(el("span","heart","♥"));
     b.onclick=()=>{stopSpeak();S.rec=false;S.open=it.n;renderSheet()};list.append(b)});
 }
@@ -749,13 +920,15 @@ async function recipePdf(it,btn){
     if(!window.jspdf)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
     const img=await corsImg(PH[it.n]);
     const W=1240,M=90,F='-apple-system,"Segoe UI",Roboto,"Noto Sans","PingFang SC","Hiragino Sans","Apple SD Gothic Neo","Malgun Gothic","Noto Sans CJK SC",sans-serif';
-    const cv=document.createElement("canvas");cv.width=W;cv.height=3200;const x=cv.getContext("2d");
+    const cv=document.createElement("canvas");cv.width=W;cv.height=4200;const x=cv.getContext("2d");
     x.fillStyle="#fff";x.fillRect(0,0,W,cv.height);x.textBaseline="top";let y=0;
     if(img){const ph=600,sc=Math.max(W/img.width,ph/img.height),sw=W/sc,shh=ph/sc;x.drawImage(img,(img.width-sw)/2,(img.height-shh)/2,sw,shh,0,0,W,ph);y=ph}
     y+=50;x.fillStyle="#6E6E73";x.font="600 26px "+F;x.fillText("Mission College · International Week · "+CN[itemCountry(it.n)],M,y);y+=48;
     x.fillStyle="#1D1D1F";x.font="800 76px "+F;wrapText(x,it.n,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=88});y+=6;
-    x.fillStyle="#6E6E73";x.font="500 30px "+F;x.fillText(rc.m,M,y);y+=58;
+    x.fillStyle="#6E6E73";x.font="500 30px "+F;x.fillText(rc.m,M,y);y+=46;
+    if(it.r){wrapText(x,t("region")+": "+(it.r[S.lang]||it.r.en),W-2*M).forEach(l=>{x.fillText(l,M,y);y+=42})}y+=16;
     x.fillStyle="#1D1D1F";x.font="400 32px "+F;wrapText(x,it.d[S.lang]||it.d.en,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=46});y+=20;
+    if(it.h){x.font="700 30px "+F;x.fillText(t("history"),M,y);y+=48;x.font="400 30px "+F;wrapText(x,it.h[S.lang]||it.h.en,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=44});y+=22}
     x.fillStyle="#6E6E73";x.font="400 28px "+F;wrapText(x,it.i,W-2*M).forEach(l=>{x.fillText(l,M,y);y+=40});y+=34;
     x.fillStyle="#1D1D1F";x.font="700 44px "+F;x.fillText(t("recipeT"),M,y);y+=70;
     (rc.s[S.lang]||rc.s.en).forEach((st,i)=>{x.font="700 32px "+F;x.fillStyle="#0071E3";x.fillText(String(i+1),M,y);x.fillStyle="#1D1D1F";x.font="400 32px "+F;
@@ -788,12 +961,15 @@ function renderSheet(){
   }
   const x=el("button","iconbtn sheetx","×");x.type="button";x.setAttribute("aria-label","Close");x.onclick=closeSheet;ph.append(x);
   const body=el("div","sheetbody");body.append(el("h2","",it.n));
+  const rg=it.r&&(it.r[S.lang]||it.r.en),hs=it.h&&(it.h[S.lang]||it.h.en);
+  if(rg){const f=el("div","fact");f.append(el("small","",t("region")),document.createTextNode(rg));body.append(f)}
   body.append(el("p","muted",t(it.i?"swipeDish":"swipePlace")));
   body.append(el("p","",it.d[S.lang]||it.d.en));
   if(it.m)body.append(el("p","",it.m[S.lang]||it.m.en));
+  if(hs){const hb=el("div","hist");hb.append(el("h3","",t("history")),el("p","",hs));body.append(hb)}
   const rc=R[it.n],steps=rc&&(rc.s[S.lang]||rc.s.en);
   const acts=el("div","row");
-  if(canSpeak)acts.append(listenBtn("sheet:"+it.n,()=>it.n+". "+(it.d[S.lang]||it.d.en)+(it.m?" "+(it.m[S.lang]||it.m.en):"")+(S.rec&&steps?" "+t("recipeT")+". "+steps.join(" "):"")));
+  if(canSpeak)acts.append(listenBtn("sheet:"+it.n,()=>it.n+". "+(rg?t("region")+": "+rg+". ":"")+(it.d[S.lang]||it.d.en)+(it.m?" "+(it.m[S.lang]||it.m.en):"")+(hs?" "+t("history")+". "+hs:"")+(S.rec&&steps?" "+t("recipeT")+". "+steps.join(" "):"")));
   {const sb=el("button","want","↗ "+t("share"));sb.type="button";sb.onclick=()=>shareItem(it);acts.append(sb)}
   if(acts.childElementCount)body.append(acts);
   if(it.i){const ch=el("div","chips");it.i.split(" · ").forEach(v=>ch.append(el("span","chip",v)));body.append(ch);
@@ -827,6 +1003,7 @@ function confetti(){
     if(now-t0<3200)requestAnimationFrame(f);else c.hidden=true})(t0);
 }
 const QN=5;
+const IG=[["Felipe","felipe.vargasl"],["Marcos","marcos.ferrari.ramirez"]];
 const BANNER={pe:["Ceviche","Lomo saltado","Causa limeña"],co:["Bandeja paisa","Arepa","Empanadas","Ajiaco","Arroz con coco"]};
 function newQuiz(){
   const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -843,6 +1020,11 @@ function renderQuiz(){
     const pz=el("div","prize"),inn=el("div","in");pz.setAttribute("role","status");
     inn.append(el("small","",t("win")+(S.name?" "+S.name:"")),el("strong","",t("claim")),el("span","",t("claimHint")),el("em","",QN+" / "+QN+" · "+Q.at));
     pz.append(el("div","stripe"),inn);box.append(pz);
+    const th=el("div","thanks");th.append(el("h3","",t("thanks")),el("p","",t("thanks2")),el("p","lbl",t("follow")));
+    IG.forEach(([nm,h])=>{const a=el("a","ig");a.href="https://www.instagram.com/"+h+"/";a.target="_blank";a.rel="noopener";
+      a.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>';
+      const dv=el("div");dv.append(el("b","",nm),el("span","","@"+h));a.append(dv,el("i","","›"));a.setAttribute("aria-label",nm+" · Instagram @"+h);th.append(a)});
+    box.append(th);
     const again=el("button","btn",t("again"));again.onclick=()=>{newQuiz();render()};
     const home=el("button","btn ghost",t("choose"));home.onclick=()=>go("choose");
     const r=el("div","row");r.append(again,home);box.append(r);return}
@@ -854,7 +1036,7 @@ function renderQuiz(){
   if(Q.ans==="ok"){
     fb.className="fb ok";fb.textContent=t("ok");
     const nx=el("button","btn",t("next"));nx.onclick=()=>{Q.i++;Q.ans=null;Q.wrong=null;render();window.scrollTo(0,0)};
-    box.append(fb,el("p","muted",d.d[S.lang]||d.d.en),nx);
+    box.append(fb);if(d.r)box.append(el("p","muted",t("region")+": "+(d.r[S.lang]||d.r.en)));box.append(el("p","muted",d.d[S.lang]||d.d.en),nx);
   }else{
     const r=el("div","row");
     ["pe","co"].forEach(c=>{const b=el("button","btn ghost",CN[c]);b.disabled=Q.wrong===c;b.onclick=()=>{if(c===cur.c){Q.ans="ok"}else{Q.ans="retry";Q.wrong=c}render()};r.append(b)});
