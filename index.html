@@ -822,23 +822,35 @@ function pickVoice(){
   const best=vs.slice().sort((a,b)=>score(b)-score(a))[0];
   return score(best)>=30?best:null;
 }
+function splitSpeech(text){return (text.match(/[^.!?。！？]+(?:[.!?](?![\s]|$)[^.!?。！？]*)*[.!?。！？]*/g)||[text]).map(x=>x.trim()).filter(Boolean)}
+let primed=false;
 function speak(id,text){
   if(!canSpeak)return;
   if(speaking===id){stopSpeak();render();return}
-  const busy=speechSynthesis.speaking||speechSynthesis.pending;
-  const parts=(text.match(/[^.!?。！？]+[.!?。！？]*/g)||[text]).map(x=>x.trim()).filter(Boolean);
-  const run=()=>{
+  const parts=splitSpeech(text);
+  try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
+  const fail=code=>{if(speaking!==id)return;stopSpeak();render();toast(t("noSound")+(code?" ("+code+")":""))};
+  const run=watch=>{
     if(speaking!==id)return;
+    let started=false;
     try{speechSynthesis.resume()}catch(e){}
     const vc=pickVoice();
-    utts=parts.map((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=vc?vc.lang:VL[S.lang];if(vc)u.voice=vc;u.rate=1;u.pitch=1;u.volume=1;
-      if(i===parts.length-1)u.onend=()=>{if(speaking===id){speaking=null;utts=[];render()}};
-      u.onerror=e=>{if(e.error!=="interrupted"&&e.error!=="canceled"&&speaking===id){speaking=null;utts=[];render()}};
+    const mine=parts.map((p,i)=>{const u=new SpeechSynthesisUtterance(p);u.lang=vc?vc.lang:VL[S.lang];if(vc)u.voice=vc;u.rate=1;u.pitch=1;u.volume=1;
+      u.onstart=()=>{started=true};
+      if(i===parts.length-1)u.onend=()=>{if(speaking===id&&utts===mine){speaking=null;utts=[];render()}};
+      u.onerror=e=>{const c=e&&e.error;if(c==="interrupted"||c==="canceled"||utts!==mine)return;fail(c)};
       return u});
-    utts.forEach(u=>{try{speechSynthesis.speak(u)}catch(e){}});
+    utts=mine;
+    mine.forEach(u=>{try{speechSynthesis.speak(u)}catch(e){}});
+    if(watch)setTimeout(()=>{if(speaking!==id||utts!==mine||started)return;
+      utts=[];try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>run(false),150)},3000);
   };
+  const busy=utts.length>0||speechSynthesis.speaking||speechSynthesis.pending;
   speaking=id;
-  if(busy){try{speechSynthesis.cancel()}catch(e){}setTimeout(run,120)}else run();
+  if(busy){utts=[];try{speechSynthesis.cancel()}catch(e){}
+    if(primed)setTimeout(()=>run(false),120);else run(false)}
+  else run(true);
+  primed=true;
   render();
 }
 function listenBtn(id,getText){const w=el("div","listenwrap"),b=el("button","want listen",speaking===id?"■ "+t("stop"):"🔊 "+t("listen"));b.type="button";b.setAttribute("aria-pressed",String(speaking===id));b.onclick=()=>speak(id,getText());w.append(b);if(speaking===id)w.append(el("small","",t("noSound")));return w}
